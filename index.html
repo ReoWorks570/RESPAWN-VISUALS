@@ -37,11 +37,6 @@
             justify-content: space-between;
         }
 
-        body[dir="rtl"] {
-            direction: rtl;
-            text-align: right;
-        }
-
         .glow-sphere {
             position: fixed;
             width: 450px;
@@ -80,7 +75,6 @@
             flex-wrap: wrap;
             gap: 20px;
             margin-bottom: 50px;
-            animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             position: relative;
             z-index: 200;
         }
@@ -157,14 +151,7 @@
             visibility: hidden;
             pointer-events: none;
             transform: translateY(-8px) scale(0.95);
-            transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-                        transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-                        visibility 0.25s ease;
-        }
-
-        body[dir="rtl"] .mini-menu {
-            right: auto;
-            left: 0;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .mini-dropdown.active .mini-menu {
@@ -189,10 +176,6 @@
             align-items: center;
             justify-content: space-between;
             width: 100%;
-        }
-
-        body[dir="rtl"] .mini-item {
-            text-align: right;
         }
 
         .mini-item:hover, .mini-item.active {
@@ -276,23 +259,6 @@
             justify-content: space-between;
         }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(139, 92, 246, 0.08), transparent 40%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-
-        .card:hover::before {
-            opacity: 1;
-        }
-
         .card:hover {
             transform: translateY(-6px);
             background: var(--card-hover);
@@ -331,10 +297,6 @@
             padding-top: 20px;
         }
 
-        body[dir="rtl"] .card-footer {
-            flex-direction: row-reverse;
-        }
-
         .card-price {
             font-size: 19px;
             font-weight: 700;
@@ -350,18 +312,7 @@
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-        }
-
-        .action-btn:hover {
-            background-color: #8a2be2;
-            border-color: #8a2be2;
-            transform: scale(1.05);
-            box-shadow: 0 4px 16px rgba(138, 43, 226, 0.4);
-        }
-
-        .action-btn:active {
-            transform: scale(0.98);
+            transition: var(--transition);
         }
 
         .card:hover .action-btn {
@@ -382,33 +333,7 @@
             border-radius: 24px;
             padding: 36px;
             backdrop-filter: blur(16px);
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                        border-color 0.4s ease,
-                        box-shadow 0.4s ease,
-                        background-color 0.4s ease;
-        }
-
-        .info-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(59, 130, 246, 0.05));
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            pointer-events: none;
-        }
-
-        .info-card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(139, 92, 246, 0.5);
-            box-shadow: 0 20px 45px -10px rgba(139, 92, 246, 0.25);
-            background: rgba(139, 92, 246, 0.04);
-        }
-
-        .info-card:hover::before {
-            opacity: 1;
+            transition: var(--transition);
         }
 
         .info-title {
@@ -443,21 +368,11 @@
             transition: var(--transition);
         }
 
-        .info-feature-item:hover {
-            background: rgba(139, 92, 246, 0.08);
-            border-color: var(--border-hover);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px -6px rgba(139, 92, 246, 0.3);
-        }
-
         .info-feature-title {
             color: var(--primary);
             font-weight: 800;
             font-size: 16px;
             margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .info-feature-desc {
@@ -480,10 +395,6 @@
             gap: 8px;
             margin-bottom: 30px;
             transition: var(--transition);
-        }
-
-        body[dir="rtl"] .back-btn {
-            flex-direction: row-reverse;
         }
 
         .back-btn:hover {
@@ -521,10 +432,6 @@
             text-align: right;
         }
 
-        body[dir="rtl"] .detail-price-box {
-            text-align: left;
-        }
-
         .detail-price-tag {
             font-size: 12px;
             color: var(--text-muted);
@@ -553,68 +460,22 @@
             border-radius: 16px;
             padding: 20px;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-                        background-color 0.4s ease, 
-                        border-color 0.4s ease, 
-                        box-shadow 0.4s ease;
+            transition: var(--transition);
         }
 
-        .sub-option-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(59, 130, 246, 0.05));
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            pointer-events: none;
-        }
-
-        .sub-option-card:hover::after {
-            opacity: 1;
-        }
-
-        .sub-option-card:hover {
-            background: rgba(139, 92, 246, 0.06);
-            border-color: rgba(139, 92, 246, 0.5);
-            box-shadow: 0 12px 35px -10px rgba(139, 92, 246, 0.3);
-            transform: translateY(-5px) scale(1.01);
-        }
-
-        .sub-option-card.active {
+        .sub-option-card:hover, .sub-option-card.active {
             background: rgba(139, 92, 246, 0.1);
             border-color: var(--primary);
-            box-shadow: 0 0 25px rgba(139, 92, 246, 0.35), inset 0 0 15px rgba(139, 92, 246, 0.1);
-            animation: pulseActiveCard 3s infinite ease-in-out;
-        }
-
-        @keyframes pulseActiveCard {
-            0%, 100% {
-                border-color: rgba(139, 92, 246, 0.7);
-                box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), inset 0 0 10px rgba(139, 92, 246, 0.1);
-            }
-            50% {
-                border-color: rgba(168, 85, 247, 1);
-                box-shadow: 0 0 32px rgba(168, 85, 247, 0.55), inset 0 0 20px rgba(168, 85, 247, 0.2);
-            }
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.35);
         }
 
         .sub-option-title {
             font-size: 16px;
             font-weight: 700;
             margin-bottom: 6px;
-            position: relative;
-            z-index: 1;
-            transition: color 0.3s ease;
-        }
-
-        .sub-option-card:hover .sub-option-title,
-        .sub-option-card.active .sub-option-title {
-            color: #c4b5fd;
         }
 
         .sub-option-price {
@@ -622,13 +483,6 @@
             font-weight: 700;
             color: var(--primary);
             margin-top: 12px;
-            position: relative;
-            z-index: 1;
-            transition: transform 0.3s ease;
-        }
-
-        .sub-option-card:hover .sub-option-price {
-            transform: scale(1.05);
         }
 
         .features-list {
@@ -649,38 +503,6 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            position: relative;
-            overflow: hidden;
-            cursor: default;
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                        background-color 0.35s ease, 
-                        border-color 0.35s ease, 
-                        box-shadow 0.35s ease;
-        }
-
-        body[dir="rtl"] .features-list li {
-            flex-direction: row-reverse;
-        }
-
-        .features-list li::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.04));
-            opacity: 0;
-            transition: opacity 0.35s ease;
-            pointer-events: none;
-        }
-
-        .features-list li:hover::after {
-            opacity: 1;
-        }
-
-        .features-list li:hover {
-            transform: translateY(-4px) scale(1.01);
-            background: rgba(139, 92, 246, 0.06);
-            border-color: rgba(139, 92, 246, 0.4);
-            box-shadow: 0 12px 35px -10px rgba(139, 92, 246, 0.25);
         }
 
         .features-list li::before {
@@ -688,13 +510,6 @@
             color: var(--primary);
             font-weight: 800;
             font-size: 16px;
-            flex-shrink: 0;
-            transition: transform 0.3s ease;
-        }
-
-        .features-list li:hover::before {
-            transform: scale(1.2);
-            color: #c4b5fd;
         }
 
         .process-section {
@@ -735,7 +550,6 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
-            position: relative;
         }
 
         .process-step-card {
@@ -743,18 +557,7 @@
             border: 1px solid var(--card-border);
             border-radius: 16px;
             padding: 24px 20px;
-            position: relative;
             transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-        }
-
-        .process-step-card:hover {
-            background: var(--card-hover);
-            border-color: var(--border-hover);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px -10px rgba(139, 92, 246, 0.2);
         }
 
         .step-number {
@@ -770,14 +573,12 @@
             font-weight: 800;
             font-size: 15px;
             margin-bottom: 16px;
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
         }
 
         .step-title {
             font-size: 15px;
             font-weight: 700;
             margin-bottom: 8px;
-            letter-spacing: -0.3px;
         }
 
         .step-text {
@@ -859,37 +660,6 @@
             border: 1px solid var(--card-border);
             padding: 18px 22px;
             border-radius: 14px;
-            animation: fadeIn 0.4s ease;
-            position: relative;
-            overflow: hidden;
-            cursor: default;
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                        background-color 0.35s ease, 
-                        border-color 0.35s ease, 
-                        box-shadow 0.35s ease;
-        }
-
-        .review-card::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 4px;
-            background: var(--primary);
-            opacity: 0;
-            transition: opacity 0.35s ease;
-        }
-
-        .review-card:hover {
-            transform: translateY(-4px) scale(1.01);
-            background: rgba(139, 92, 246, 0.06);
-            border-color: var(--border-hover);
-            box-shadow: 0 12px 35px -10px rgba(139, 92, 246, 0.25);
-        }
-
-        .review-card:hover::before {
-            opacity: 1;
         }
 
         .review-author {
@@ -897,11 +667,6 @@
             font-size: 14px;
             color: var(--primary);
             margin-bottom: 6px;
-            transition: color 0.3s ease;
-        }
-
-        .review-card:hover .review-author {
-            color: #a78bfa;
         }
 
         .review-text {
@@ -921,113 +686,6 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 16px 14px;
-            }
-
-            header {
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-                gap: 14px;
-                margin-bottom: 30px;
-            }
-
-            .hero-title {
-                font-size: 28px;
-                letter-spacing: -1px;
-            }
-
-            .hero-subtitle {
-                font-size: 14px;
-                margin-bottom: 24px;
-            }
-
-            .services-grid {
-                grid-template-columns: 1fr;
-                gap: 14px;
-            }
-
-            .card {
-                padding: 20px;
-            }
-
-            .info-card {
-                padding: 24px 18px;
-            }
-
-            .info-features {
-                grid-template-columns: 1fr;
-            }
-
-            .detail-card {
-                padding: 20px 16px;
-                border-radius: 18px;
-            }
-
-            .detail-header {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 16px;
-                margin-bottom: 20px;
-                padding-bottom: 20px;
-            }
-
-            .detail-price-box {
-                text-align: left;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid var(--card-border);
-                padding: 12px 16px;
-                border-radius: 12px;
-            }
-
-            body[dir="rtl"] .detail-price-box {
-                text-align: right;
-            }
-
-            .detail-price-value {
-                font-size: 24px;
-            }
-
-            .sub-options-grid {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .features-list {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-
-            .features-list li {
-                padding: 14px;
-                font-size: 13px;
-            }
-
-            .process-steps-grid {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .process-step-card {
-                padding: 18px 16px;
-            }
-
-            .tg-btn {
-                padding: 14px 18px;
-                font-size: 14px;
-            }
         }
     </style>
 </head>
@@ -1316,7 +974,7 @@
                     setCurrency(currentCurr, document.getElementById('currLabel').innerText);
                 }
             } catch (err) {
-                console.warn('Курсы API недоступны, используются резервные значения:', err);
+                console.warn('Курсы API недоступны, используются резервные значения.');
             }
         }
 
@@ -1326,57 +984,63 @@
             const currDropdown = document.getElementById('currDropdown');
             const langDropdown = document.getElementById('langDropdown');
 
-            document.getElementById('currBtn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                langDropdown.classList.remove('active');
-                currDropdown.classList.toggle('active');
-            });
+            if (document.getElementById('currBtn')) {
+                document.getElementById('currBtn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (langDropdown) langDropdown.classList.remove('active');
+                    if (currDropdown) currDropdown.classList.toggle('active');
+                });
+            }
 
-            document.getElementById('langBtn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                currDropdown.classList.remove('active');
-                langDropdown.classList.toggle('active');
-            });
+            if (document.getElementById('langBtn')) {
+                document.getElementById('langBtn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (currDropdown) currDropdown.classList.remove('active');
+                    if (langDropdown) langDropdown.classList.toggle('active');
+                });
+            }
 
             document.addEventListener('click', () => {
-                currDropdown.classList.remove('active');
-                langDropdown.classList.remove('active');
+                if (currDropdown) currDropdown.classList.remove('active');
+                if (langDropdown) langDropdown.classList.remove('active');
             });
 
-            currDropdown.querySelectorAll('.mini-item').forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const curr = item.getAttribute('data-curr');
-                    const label = item.getAttribute('data-label');
-                    
-                    currDropdown.querySelectorAll('.mini-item').forEach(b => b.classList.remove('active'));
-                    item.classList.add('active');
-                    
-                    setCurrency(curr, label);
-                    currDropdown.classList.remove('active');
+            if (currDropdown) {
+                currDropdown.querySelectorAll('.mini-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const curr = item.getAttribute('data-curr');
+                        const label = item.getAttribute('data-label');
+                        
+                        currDropdown.querySelectorAll('.mini-item').forEach(b => b.classList.remove('active'));
+                        item.classList.add('active');
+                        
+                        setCurrency(curr, label);
+                        currDropdown.classList.remove('active');
+                    });
                 });
-            });
+            }
 
-            langDropdown.querySelectorAll('.mini-item').forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const lang = item.getAttribute('data-lang');
-                    const label = item.getAttribute('data-label');
-                    
-                    langDropdown.querySelectorAll('.mini-item').forEach(b => b.classList.remove('active'));
-                    item.classList.add('active');
-                    
-                    setLanguage(lang, label);
-                    langDropdown.classList.remove('active');
+            if (langDropdown) {
+                langDropdown.querySelectorAll('.mini-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const lang = item.getAttribute('data-lang');
+                        const label = item.getAttribute('data-label');
+                        
+                        langDropdown.querySelectorAll('.mini-item').forEach(b => b.classList.remove('active'));
+                        item.classList.add('active');
+                        
+                        setLanguage(lang, label);
+                        langDropdown.classList.remove('active');
+                    });
                 });
-            });
+            }
         });
 
         function setLanguage(lang, label) {
             currentLang = lang;
             document.getElementById('langLabel').innerText = label;
-
-            document.body.removeAttribute('dir');
 
             const t = translations[lang];
             document.querySelectorAll('[data-i18n]').forEach(el => {
