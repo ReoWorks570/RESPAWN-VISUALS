@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">Respawn Visuals — Веб-разработка & Дизайн</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Подключение Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <style>
         :root {
             --bg-color: #08080a;
@@ -1197,7 +1193,7 @@
                     <form class="review-form" id="reviewForm" onsubmit="submitReview(event)">
                         <input type="text" id="reviewAuthor" class="review-input" data-i18n-placeholder="placeholderName" placeholder="Ваше имя" required>
                         <textarea id="reviewText" class="review-textarea" data-i18n-placeholder="placeholderReview" placeholder="Ваш отзыв..." required></textarea>
-                        <button type="submit" id="submitReviewBtn" class="action-btn" style="align-self: flex-start;" data-i18n="sendReview">Отправить отзыв</button>
+                        <button type="submit" class="action-btn" style="align-self: flex-start;" data-i18n="sendReview">Отправить отзыв</button>
                     </form>
 
                     <div class="reviews-list" id="reviewsList"></div>
@@ -1211,12 +1207,6 @@
     </footer>
 
     <script>
-        // ИНИЦИАЛИЗАЦИЯ SUPABASE (ВСТАВЬ СВОИ ДАННЫЕ)
-        const SUPABASE_URL = 'ТВОЙ_SUPABASE_URL';
-        const SUPABASE_ANON_KEY = 'ТВОЙ_SUPABASE_ANON_KEY';
-        
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         let currentProductId = 'web';
         let currentSubTier = 'site';
         let currentLang = 'ru';
@@ -1314,7 +1304,25 @@
             }
         };
 
+        async function fetchExchangeRates() {
+            try {
+                const response = await fetch('https://open.er-api.com/v6/latest/KZT');
+                if (!response.ok) throw new Error('Network response error');
+                const data = await response.json();
+                if (data && data.rates) {
+                    rates.RUB = data.rates.RUB || rates.RUB;
+                    rates.USD = data.rates.USD || rates.USD;
+                    rates.EUR = data.rates.EUR || rates.EUR;
+                    setCurrency(currentCurr, document.getElementById('currLabel').innerText);
+                }
+            } catch (err) {
+                console.warn('Курсы API недоступны, используются резервные значения:', err);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            fetchExchangeRates();
+
             const currDropdown = document.getElementById('currDropdown');
             const langDropdown = document.getElementById('langDropdown');
 
@@ -1561,31 +1569,34 @@
             document.getElementById('detailPrice').innerText = `${converted.toLocaleString()} ${symbols[currentCurr]}`;
         }
 
-        // ОБНОВЛЕННЫЕ ФУНКЦИИ ДЛЯ РАБОТЫ С SUPABASE БАЗОЙ ДАННЫХ
-        async function renderReviews(productId) {
-            const listEl = document.getElementById('reviewsList');
-            const t = translations[currentLang];
-            listEl.innerHTML = '<p style="color: var(--text-muted); font-size: 14px;">Загрузка отзывов...</p>';
-
-            const { data: reviews, error } = await supabase
-                .from('reviews')
-                .select('*')
-                .eq('product_id', productId)
-                .order('id', { ascending: false });
-
-            if (error) {
-                console.error('Ошибка при загрузке отзывов из Supabase:', error);
-                listEl.innerHTML = `<p style="color: #ef4444; font-size: 14px;">Не удалось загрузить отзывы.</p>`;
-                return;
+        function getStoredReviews() {
+            try {
+                const data = localStorage.getItem('respawn_reviews');
+                return data ? JSON.parse(data) : {};
+            } catch(e) {
+                return {};
             }
+        }
 
-            if (!reviews || reviews.length === 0) {
+        function saveReviewsData(reviewsObj) {
+            try {
+                localStorage.setItem('respawn_reviews', JSON.stringify(reviewsObj));
+            } catch(e) {}
+        }
+
+        function renderReviews(productId) {
+            const listEl = document.getElementById('reviewsList');
+            const allReviews = getStoredReviews();
+            const productReviews = allReviews[productId] || [];
+            const t = translations[currentLang];
+
+            if (productReviews.length === 0) {
                 listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;" data-i18n="noReviews">${t.noReviews}</p>`;
                 return;
             }
 
             listEl.innerHTML = '';
-            reviews.forEach(rev => {
+            [...productReviews].reverse().forEach(rev => {
                 const card = document.createElement('div');
                 card.className = 'review-card';
                 card.innerHTML = `
@@ -1596,39 +1607,27 @@
             });
         }
 
-        async function submitReview(event) {
+        function submitReview(event) {
             event.preventDefault();
             const authorInput = document.getElementById('reviewAuthor');
             const textInput = document.getElementById('reviewText');
-            const submitBtn = document.getElementById('submitReviewBtn');
 
             const author = authorInput.value.trim();
             const text = textInput.value.trim();
 
             if (!author || !text) return;
 
-            submitBtn.disabled = true;
-            submitBtn.innerText = 'Отправка...';
-
-            const { error } = await supabase
-                .from('reviews')
-                .insert([{ 
-                    author: author, 
-                    text: text, 
-                    product_id: currentProductId 
-                }]);
-
-            if (error) {
-                console.error('Ошибка сохранения отзыва:', error);
-                alert('Не удалось отправить отзыв. Проверь создание таблицы в Supabase!');
-            } else {
-                authorInput.value = '';
-                textInput.value = '';
-                await renderReviews(currentProductId);
+            const allReviews = getStoredReviews();
+            if (!allReviews[currentProductId]) {
+                allReviews[currentProductId] = [];
             }
+            
+            allReviews[currentProductId].push({ author, text, date: Date.now() });
+            saveReviewsData(allReviews);
 
-            submitBtn.disabled = false;
-            submitBtn.innerText = translations[currentLang].sendReview || 'Отправить отзыв';
+            authorInput.value = '';
+            textInput.value = '';
+            renderReviews(currentProductId);
         }
 
         function escapeHtml(str) {
