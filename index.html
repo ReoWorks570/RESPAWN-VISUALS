@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">Respawn Visuals — Веб-разработка & Дизайн</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Подключаем Supabase JS SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <style>
         :root {
             --bg-color: #08080a;
@@ -366,11 +362,6 @@
 
         .action-btn:active {
             transform: scale(0.98);
-        }
-
-        .action-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
         }
 
         .card:hover .action-btn {
@@ -1202,7 +1193,7 @@
                     <form class="review-form" id="reviewForm" onsubmit="submitReview(event)">
                         <input type="text" id="reviewAuthor" class="review-input" data-i18n-placeholder="placeholderName" placeholder="Ваше имя" required>
                         <textarea id="reviewText" class="review-textarea" data-i18n-placeholder="placeholderReview" placeholder="Ваш отзыв..." required></textarea>
-                        <button type="submit" id="submitBtn" class="action-btn" style="align-self: flex-start;" data-i18n="sendReview">Отправить отзыв</button>
+                        <button type="submit" class="action-btn" style="align-self: flex-start;" data-i18n="sendReview">Отправить отзыв</button>
                     </form>
 
                     <div class="reviews-list" id="reviewsList"></div>
@@ -1216,11 +1207,6 @@
     </footer>
 
     <script>
-        // Инициализация клиентом Supabase
-        const SUPABASE_URL = 'https://tmmwkjqblsigfzjzvgtf.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_KZflsGXYsR9dWhUaHzZODQ_7geng4fF';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         let currentProductId = 'web';
         let currentSubTier = 'site';
         let currentLang = 'ru';
@@ -1565,31 +1551,34 @@
             document.getElementById('detailPrice').innerText = `${converted.toLocaleString()} ${symbols[currentCurr]}`;
         }
 
-        // Загрузка отзывов из Supabase
-        async function renderReviews(productId) {
-            const listEl = document.getElementById('reviewsList');
-            const t = translations[currentLang];
-            listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;">Загрузка отзывов...</p>`;
-
-            const { data: productReviews, error } = await supabaseClient
-                .from('reviews')
-                .select('*')
-                .eq('product_id', productId)
-                .order('created_at', { ascending: false });
-
-            if (error) {
-                console.error("Ошибка загрузки отзывов:", error);
-                listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;">Ошибка при загрузке отзывов</p>`;
-                return;
+        function getStoredReviews() {
+            try {
+                const data = localStorage.getItem('respawn_reviews');
+                return data ? JSON.parse(data) : {};
+            } catch(e) {
+                return {};
             }
+        }
 
-            if (!productReviews || productReviews.length === 0) {
+        function saveReviewsData(reviewsObj) {
+            try {
+                localStorage.setItem('respawn_reviews', JSON.stringify(reviewsObj));
+            } catch(e) {}
+        }
+
+        function renderReviews(productId) {
+            const listEl = document.getElementById('reviewsList');
+            const allReviews = getStoredReviews();
+            const productReviews = allReviews[productId] || [];
+            const t = translations[currentLang];
+
+            if (productReviews.length === 0) {
                 listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;" data-i18n="noReviews">${t.noReviews}</p>`;
                 return;
             }
 
             listEl.innerHTML = '';
-            productReviews.forEach(rev => {
+            [...productReviews].reverse().forEach(rev => {
                 const card = document.createElement('div');
                 card.className = 'review-card';
                 card.innerHTML = `
@@ -1600,33 +1589,23 @@
             });
         }
 
-        // Отправка отзыва в Supabase
-        async function submitReview(event) {
+        function submitReview(event) {
             event.preventDefault();
             const authorInput = document.getElementById('reviewAuthor');
             const textInput = document.getElementById('reviewText');
-            const submitBtn = document.getElementById('submitBtn');
 
             const author = authorInput.value.trim();
             const text = textInput.value.trim();
 
             if (!author || !text) return;
 
-            submitBtn.disabled = true;
-
-            const { error } = await supabaseClient
-                .from('reviews')
-                .insert([
-                    { product_id: currentProductId, author: author, text: text }
-                ]);
-
-            submitBtn.disabled = false;
-
-            if (error) {
-                console.error("Ошибка отправки отзыва:", error);
-                alert("Произошла ошибка при отправке отзыва.");
-                return;
+            const allReviews = getStoredReviews();
+            if (!allReviews[currentProductId]) {
+                allReviews[currentProductId] = [];
             }
+            
+            allReviews[currentProductId].push({ author, text, date: Date.now() });
+            saveReviewsData(allReviews);
 
             authorInput.value = '';
             textInput.value = '';
