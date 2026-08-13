@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">Respawn Visuals — Веб-разработка & Дизайн</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Подключаем клиентскую библиотеку Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg-color: #08080a;
@@ -1207,6 +1209,12 @@
     </footer>
 
     <script>
+        // Инициализация Supabase с твоими ключами
+        const SUPABASE_URL = 'https://tmmwkjqblsigfzjzvgtf.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_KZflsGXYsR9dWhUaHzZODQ_7geng4fF';
+
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         let currentProductId = 'web';
         let currentSubTier = 'site';
         let currentLang = 'ru';
@@ -1551,34 +1559,26 @@
             document.getElementById('detailPrice').innerText = `${converted.toLocaleString()} ${symbols[currentCurr]}`;
         }
 
-        function getStoredReviews() {
-            try {
-                const data = localStorage.getItem('respawn_reviews');
-                return data ? JSON.parse(data) : {};
-            } catch(e) {
-                return {};
-            }
-        }
+        // --- ВЗАИМОДЕЙСТВИЕ С СЕРВЕРНОЙ БАЗОЙ SUPABASE ---
 
-        function saveReviewsData(reviewsObj) {
-            try {
-                localStorage.setItem('respawn_reviews', JSON.stringify(reviewsObj));
-            } catch(e) {}
-        }
-
-        function renderReviews(productId) {
+        // Загрузка отзывов из Supabase
+        async function renderReviews(productId) {
             const listEl = document.getElementById('reviewsList');
-            const allReviews = getStoredReviews();
-            const productReviews = allReviews[productId] || [];
             const t = translations[currentLang];
 
-            if (productReviews.length === 0) {
-                listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;" data-i18n="noReviews">${t.noReviews}</p>`;
+            const { data: productReviews, error } = await supabaseClient
+                .from('reviews')
+                .select('*')
+                .eq('product_id', productId)
+                .order('created_at', { ascending: false });
+
+            if (error || !productReviews || productReviews.length === 0) {
+                listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;">${t.noReviews}</p>`;
                 return;
             }
 
             listEl.innerHTML = '';
-            [...productReviews].reverse().forEach(rev => {
+            productReviews.forEach(rev => {
                 const card = document.createElement('div');
                 card.className = 'review-card';
                 card.innerHTML = `
@@ -1589,7 +1589,8 @@
             });
         }
 
-        function submitReview(event) {
+        // Отправка нового отзыва в Supabase
+        async function submitReview(event) {
             event.preventDefault();
             const authorInput = document.getElementById('reviewAuthor');
             const textInput = document.getElementById('reviewText');
@@ -1599,13 +1600,15 @@
 
             if (!author || !text) return;
 
-            const allReviews = getStoredReviews();
-            if (!allReviews[currentProductId]) {
-                allReviews[currentProductId] = [];
+            const { error } = await supabaseClient
+                .from('reviews')
+                .insert([{ product_id: currentProductId, author: author, text: text }]);
+
+            if (error) {
+                console.error('Ошибка Supabase:', error);
+                alert('Не удалось отправить отзыв. Проверь создание таблицы!');
+                return;
             }
-            
-            allReviews[currentProductId].push({ author, text, date: Date.now() });
-            saveReviewsData(allReviews);
 
             authorInput.value = '';
             textInput.value = '';
