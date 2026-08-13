@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">Respawn Visuals — Веб-разработка & Дизайн</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Подключение Supabase JS SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <style>
         :root {
             --bg-color: #08080a;
@@ -39,6 +35,11 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+        }
+
+        body[dir="rtl"] {
+            direction: rtl;
+            text-align: right;
         }
 
         .glow-sphere {
@@ -79,6 +80,7 @@
             flex-wrap: wrap;
             gap: 20px;
             margin-bottom: 50px;
+            animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             position: relative;
             z-index: 200;
         }
@@ -155,7 +157,14 @@
             visibility: hidden;
             pointer-events: none;
             transform: translateY(-8px) scale(0.95);
-            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+            transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                        visibility 0.25s ease;
+        }
+
+        body[dir="rtl"] .mini-menu {
+            right: auto;
+            left: 0;
         }
 
         .mini-dropdown.active .mini-menu {
@@ -182,6 +191,10 @@
             width: 100%;
         }
 
+        body[dir="rtl"] .mini-item {
+            text-align: right;
+        }
+
         .mini-item:hover, .mini-item.active {
             background: var(--primary);
             color: #fff;
@@ -189,7 +202,7 @@
 
         .page {
             display: none;
-            animation: fadeIn 0.5s ease forwards;
+            animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         .page.active {
@@ -263,6 +276,23 @@
             justify-content: space-between;
         }
 
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(139, 92, 246, 0.08), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
         .card:hover {
             transform: translateY(-6px);
             background: var(--card-hover);
@@ -301,6 +331,10 @@
             padding-top: 20px;
         }
 
+        body[dir="rtl"] .card-footer {
+            flex-direction: row-reverse;
+        }
+
         .card-price {
             font-size: 19px;
             font-weight: 700;
@@ -316,19 +350,120 @@
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
 
         .action-btn:hover {
-            background-color: var(--primary);
+            background-color: #8a2be2;
+            border-color: #8a2be2;
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px rgba(138, 43, 226, 0.4);
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .card:hover .action-btn {
+            background: var(--primary);
             border-color: var(--primary);
-            transform: scale(1.03);
             box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
         }
 
-        .action-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .info-section {
+            margin-top: 50px;
+            border-top: 1px solid var(--card-border);
+            padding-top: 40px;
+        }
+
+        .info-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 36px;
+            backdrop-filter: blur(16px);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                        border-color 0.4s ease,
+                        box-shadow 0.4s ease,
+                        background-color 0.4s ease;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(59, 130, 246, 0.05));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .info-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(139, 92, 246, 0.5);
+            box-shadow: 0 20px 45px -10px rgba(139, 92, 246, 0.25);
+            background: rgba(139, 92, 246, 0.04);
+        }
+
+        .info-card:hover::before {
+            opacity: 1;
+        }
+
+        .info-title {
+            font-size: clamp(22px, 3.5vw, 28px);
+            font-weight: 800;
+            margin-bottom: 14px;
+            letter-spacing: -0.8px;
+            background: linear-gradient(180deg, #ffffff 0%, #d4d4d8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .info-text {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 28px;
+            max-width: 900px;
+        }
+
+        .info-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .info-feature-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 18px 20px;
+            transition: var(--transition);
+        }
+
+        .info-feature-item:hover {
+            background: rgba(139, 92, 246, 0.08);
+            border-color: var(--border-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px -6px rgba(139, 92, 246, 0.3);
+        }
+
+        .info-feature-title {
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 16px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-feature-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
         }
 
         .back-btn {
@@ -345,6 +480,10 @@
             gap: 8px;
             margin-bottom: 30px;
             transition: var(--transition);
+        }
+
+        body[dir="rtl"] .back-btn {
+            flex-direction: row-reverse;
         }
 
         .back-btn:hover {
@@ -382,6 +521,10 @@
             text-align: right;
         }
 
+        body[dir="rtl"] .detail-price-box {
+            text-align: left;
+        }
+
         .detail-price-tag {
             font-size: 12px;
             color: var(--text-muted);
@@ -410,28 +553,68 @@
             border-radius: 16px;
             padding: 20px;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: var(--transition);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                        background-color 0.4s ease, 
+                        border-color 0.4s ease, 
+                        box-shadow 0.4s ease;
+        }
+
+        .sub-option-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(59, 130, 246, 0.05));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .sub-option-card:hover::after {
+            opacity: 1;
         }
 
         .sub-option-card:hover {
             background: rgba(139, 92, 246, 0.06);
             border-color: rgba(139, 92, 246, 0.5);
-            transform: translateY(-4px);
+            box-shadow: 0 12px 35px -10px rgba(139, 92, 246, 0.3);
+            transform: translateY(-5px) scale(1.01);
         }
 
         .sub-option-card.active {
             background: rgba(139, 92, 246, 0.1);
             border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.35), inset 0 0 15px rgba(139, 92, 246, 0.1);
+            animation: pulseActiveCard 3s infinite ease-in-out;
+        }
+
+        @keyframes pulseActiveCard {
+            0%, 100% {
+                border-color: rgba(139, 92, 246, 0.7);
+                box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), inset 0 0 10px rgba(139, 92, 246, 0.1);
+            }
+            50% {
+                border-color: rgba(168, 85, 247, 1);
+                box-shadow: 0 0 32px rgba(168, 85, 247, 0.55), inset 0 0 20px rgba(168, 85, 247, 0.2);
+            }
         }
 
         .sub-option-title {
             font-size: 16px;
             font-weight: 700;
             margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
+            transition: color 0.3s ease;
+        }
+
+        .sub-option-card:hover .sub-option-title,
+        .sub-option-card.active .sub-option-title {
+            color: #c4b5fd;
         }
 
         .sub-option-price {
@@ -439,6 +622,13 @@
             font-weight: 700;
             color: var(--primary);
             margin-top: 12px;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .sub-option-card:hover .sub-option-price {
+            transform: scale(1.05);
         }
 
         .features-list {
@@ -459,6 +649,38 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                        background-color 0.35s ease, 
+                        border-color 0.35s ease, 
+                        box-shadow 0.35s ease;
+        }
+
+        body[dir="rtl"] .features-list li {
+            flex-direction: row-reverse;
+        }
+
+        .features-list li::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.04));
+            opacity: 0;
+            transition: opacity 0.35s ease;
+            pointer-events: none;
+        }
+
+        .features-list li:hover::after {
+            opacity: 1;
+        }
+
+        .features-list li:hover {
+            transform: translateY(-4px) scale(1.01);
+            background: rgba(139, 92, 246, 0.06);
+            border-color: rgba(139, 92, 246, 0.4);
+            box-shadow: 0 12px 35px -10px rgba(139, 92, 246, 0.25);
         }
 
         .features-list li::before {
@@ -466,6 +688,102 @@
             color: var(--primary);
             font-weight: 800;
             font-size: 16px;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .features-list li:hover::before {
+            transform: scale(1.2);
+            color: #c4b5fd;
+        }
+
+        .process-section {
+            margin-top: 40px;
+            margin-bottom: 40px;
+            border-top: 1px solid var(--card-border);
+            padding-top: 40px;
+        }
+
+        .process-title-container {
+            margin-bottom: 30px;
+        }
+
+        .process-subtitle-tag {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .process-main-title {
+            font-size: clamp(20px, 3vw, 26px);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+        }
+
+        .process-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            max-width: 800px;
+        }
+
+        .process-steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            position: relative;
+        }
+
+        .process-step-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px 20px;
+            position: relative;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .process-step-card:hover {
+            background: var(--card-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px -10px rgba(139, 92, 246, 0.2);
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid var(--border-hover);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 15px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+        }
+
+        .step-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        .step-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
         }
 
         .tg-btn {
@@ -542,6 +860,36 @@
             padding: 18px 22px;
             border-radius: 14px;
             animation: fadeIn 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                        background-color 0.35s ease, 
+                        border-color 0.35s ease, 
+                        box-shadow 0.35s ease;
+        }
+
+        .review-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .review-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            background: rgba(139, 92, 246, 0.06);
+            border-color: var(--border-hover);
+            box-shadow: 0 12px 35px -10px rgba(139, 92, 246, 0.25);
+        }
+
+        .review-card:hover::before {
+            opacity: 1;
         }
 
         .review-author {
@@ -549,6 +897,11 @@
             font-size: 14px;
             color: var(--primary);
             margin-bottom: 6px;
+            transition: color 0.3s ease;
+        }
+
+        .review-card:hover .review-author {
+            color: #a78bfa;
         }
 
         .review-text {
@@ -569,6 +922,113 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px 14px;
+            }
+
+            header {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                gap: 14px;
+                margin-bottom: 30px;
+            }
+
+            .hero-title {
+                font-size: 28px;
+                letter-spacing: -1px;
+            }
+
+            .hero-subtitle {
+                font-size: 14px;
+                margin-bottom: 24px;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .info-card {
+                padding: 24px 18px;
+            }
+
+            .info-features {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-card {
+                padding: 20px 16px;
+                border-radius: 18px;
+            }
+
+            .detail-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 16px;
+                margin-bottom: 20px;
+                padding-bottom: 20px;
+            }
+
+            .detail-price-box {
+                text-align: left;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid var(--card-border);
+                padding: 12px 16px;
+                border-radius: 12px;
+            }
+
+            body[dir="rtl"] .detail-price-box {
+                text-align: right;
+            }
+
+            .detail-price-value {
+                font-size: 24px;
+            }
+
+            .sub-options-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .features-list {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .features-list li {
+                padding: 14px;
+                font-size: 13px;
+            }
+
+            .process-steps-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .process-step-card {
+                padding: 18px 16px;
+            }
+
+            .tg-btn {
+                padding: 14px 18px;
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -581,7 +1041,9 @@
             <div class="logo">RESPAWN VISUALS</div>
             <div class="header-controls">
                 <div class="mini-dropdown" id="currDropdown">
-                    <button type="button" class="mini-btn" id="currBtn"><span id="currLabel">₸ KZT</span></button>
+                    <button type="button" class="mini-btn" id="currBtn">
+                        <span id="currLabel">₸ KZT</span>
+                    </button>
                     <div class="mini-menu">
                         <button type="button" class="mini-item active" data-curr="KZT" data-label="₸ KZT">₸ KZT</button>
                         <button type="button" class="mini-item" data-curr="RUB" data-label="₽ RUB">₽ RUB</button>
@@ -591,7 +1053,9 @@
                 </div>
 
                 <div class="mini-dropdown" id="langDropdown">
-                    <button type="button" class="mini-btn" id="langBtn"><span id="langLabel">RU</span></button>
+                    <button type="button" class="mini-btn" id="langBtn">
+                        <span id="langLabel">RU</span>
+                    </button>
                     <div class="mini-menu">
                         <button type="button" class="mini-item active" data-lang="ru" data-label="RU">RU</button>
                         <button type="button" class="mini-item" data-lang="en" data-label="EN">EN</button>
@@ -602,7 +1066,7 @@
 
         <main id="mainPage" class="page active">
             <h1 class="hero-title" data-i18n="heroTitle">Имбовые сайты и дизайн</h1>
-            <p class="hero-subtitle" data-i18n="heroSubtitle">Выбирай услугу под свои задачи. Премиальный дизайн, адаптивность и плавная анимация.</p>
+            <p class="hero-subtitle" data-i18n="heroSubtitle">Выбирай услугу под свои задачи. Премиальный дизайн, адаптивность под любые устройства и плавная анимация.</p>
             
             <div class="filter-tabs">
                 <button type="button" class="filter-btn active" onclick="filterCards('all', event)" data-i18n="filterAll">Все услуги</button>
@@ -615,7 +1079,7 @@
                     <div>
                         <div class="card-tag">Web Dev & UI</div>
                         <div class="card-name" data-i18n="card1Name">Создание сайтов</div>
-                        <div class="card-desc" data-i18n="card1Desc">Полноценный адаптивный сайт с интерактивными элементами.</div>
+                        <div class="card-desc" data-i18n="card1Desc">Полноценный адаптивный сайт с интерактивными элементами и высокой производительностью.</div>
                     </div>
                     <div class="card-footer">
                         <span class="card-price" data-price="20000">от 20 000 ₸</span>
@@ -627,7 +1091,7 @@
                     <div>
                         <div class="card-tag">Logo & Design</div>
                         <div class="card-name" data-i18n="card2Name">Логотипы</div>
-                        <div class="card-desc" data-i18n="card2Desc">Уникальные логотипы и фирменный стиль для вашего проекта.</div>
+                        <div class="card-desc" data-i18n="card2Desc">Уникальные логотипы, иконки и фирменный стиль для вашего проекта.</div>
                     </div>
                     <div class="card-footer">
                         <span class="card-price" data-price="10000">от 10 000 ₸</span>
@@ -635,6 +1099,30 @@
                     </div>
                 </div>
             </div>
+
+            <section class="info-section">
+                <div class="info-card">
+                    <div class="card-tag" data-i18n="infoTag">О студии</div>
+                    <h2 class="info-title" data-i18n="infoTitle">Разрабатываем цифровые продукты высочайшего качества</h2>
+                    <p class="info-text" data-i18n="infoText">
+                        Respawn Visuals — это современный подбор решений для вашего бизнеса или личного бренда. Мы создаём быстрые сайты с чистой версткой и выразительным дизайном, а также разрабатываем уникальные логотипы, выделяющие вас среди конкурентов. Каждая деталь доводится до идеала: от плавной анимации элементов до удобства работы на смартфонах.
+                    </p>
+                    <div class="info-features">
+                        <div class="info-feature-item">
+                            <div class="info-feature-title"><span data-i18n="infoFeat1Title">100% Адаптив</span></div>
+                            <div class="info-feature-desc" data-i18n="infoFeat1Desc">Идеальный вид на смартфонах, планшетах и широких мониторах.</div>
+                        </div>
+                        <div class="info-feature-item">
+                            <div class="info-feature-title"><span data-i18n="infoFeat2Title">Высокая скорость</span></div>
+                            <div class="info-feature-desc" data-i18n="infoFeat2Desc">Чистый оптимизированный код для мгновенной загрузки страниц.</div>
+                        </div>
+                        <div class="info-feature-item">
+                            <div class="info-feature-title"><span data-i18n="infoFeat3Title">Прозрачный процесс</span></div>
+                            <div class="info-feature-desc" data-i18n="infoFeat3Desc">Сроки и цена фиксируются заранее. Работа сдаётся поэтапно.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
 
         <section id="detailPage" class="page">
@@ -645,7 +1133,7 @@
                     <div>
                         <div class="card-tag" id="detailTag">Web Dev & UI</div>
                         <h2 class="detail-title" id="detailTitle">Создание сайтов</h2>
-                        <p class="hero-subtitle" style="margin-bottom: 0;" id="detailSub">Разработка интерфейсов под ваши задачи.</p>
+                        <p class="hero-subtitle" style="margin-bottom: 0;" id="detailSub">Индивидуальная разработка интерфейса под любые ваши задачи.</p>
                     </div>
                     <div class="detail-price-box">
                         <div class="detail-price-tag" data-i18n="priceTag">Стоимость услуги</div>
@@ -659,7 +1147,43 @@
 
                 <ul class="features-list" id="detailFeaturesList"></ul>
 
-                <a href="https://t.me/lgma_570" target="_blank" rel="noopener noreferrer" class="tg-btn" data-i18n="tgButton">
+                <div class="process-section" id="processSection">
+                    <div class="process-title-container">
+                        <div class="process-subtitle-tag" data-i18n="processTag">Как мы работаем</div>
+                        <h3 class="process-main-title" data-i18n="processTitle">От стратегии до запуска</h3>
+                        <p class="process-desc" id="processDescText" data-i18n="processDescWeb">Ведём проект пошагово: каждый этап заканчивается приёмкой. Сроки и стоимость фиксируем до старта, а на финише передаём исходный код, доступы и обучаем работе с сайтом.</p>
+                    </div>
+
+                    <div class="process-steps-grid">
+                        <div class="process-step-card">
+                            <div class="step-number">1</div>
+                            <div class="step-title" id="step1Title" data-i18n="step1TitleWeb">Аналитика и стратегия</div>
+                            <div class="step-text" id="step1Text" data-i18n="step1TextWeb">Изучаем задачи, аудиторию и конкурентов, фиксируем цели и структуру сайта.</div>
+                        </div>
+                        <div class="process-step-card">
+                            <div class="step-number">2</div>
+                            <div class="step-title" id="step2Title" data-i18n="step2TitleWeb">Прототип и дизайн</div>
+                            <div class="step-text" id="step2Text" data-i18n="step2TextWeb">Проектируем интерфейс под конверсию, создаём уникальный визуальный стиль.</div>
+                        </div>
+                        <div class="process-step-card">
+                            <div class="step-number">3</div>
+                            <div class="step-title" id="step3Title" data-i18n="step3TitleWeb">Разработка</div>
+                            <div class="step-text" id="step3Text" data-i18n="step3TextWeb">Чистая верстка, программирование, интеграция интерактивных элементов и анимаций.</div>
+                        </div>
+                        <div class="process-step-card">
+                            <div class="step-number">4</div>
+                            <div class="step-title" id="step4Title" data-i18n="step4TitleWeb">Оптимизация</div>
+                            <div class="step-text" id="step4Text" data-i18n="step4TextWeb">Настраиваем адаптивность под любые устройства, скорость загрузки и базовое SEO.</div>
+                        </div>
+                        <div class="process-step-card">
+                            <div class="step-number">5</div>
+                            <div class="step-title" id="step5Title" data-i18n="step5TitleWeb">Запуск</div>
+                            <div class="step-text" id="step5Text" data-i18n="step5TextWeb">Перенос на хостинг, проверка работы, передача исходников и полная поддержка.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="https://t.me/lgma_570" target="_blank" rel="noopener noreferrer" class="tg-btn" id="tgBtnText" data-i18n="tgButton">
                     Обсудить со мной в Telegram (@lgma_570)
                 </a>
 
@@ -669,7 +1193,7 @@
                     <form class="review-form" id="reviewForm" onsubmit="submitReview(event)">
                         <input type="text" id="reviewAuthor" class="review-input" data-i18n-placeholder="placeholderName" placeholder="Ваше имя" required>
                         <textarea id="reviewText" class="review-textarea" data-i18n-placeholder="placeholderReview" placeholder="Ваш отзыв..." required></textarea>
-                        <button type="submit" id="submitBtn" class="action-btn" style="align-self: flex-start;" data-i18n="sendReview">Отправить отзыв</button>
+                        <button type="submit" class="action-btn" style="align-self: flex-start;" data-i18n="sendReview">Отправить отзыв</button>
                     </form>
 
                     <div class="reviews-list" id="reviewsList"></div>
@@ -683,12 +1207,6 @@
     </footer>
 
     <script>
-        // Исправленный URL проекта и ваш публичный ключ
-        const SUPABASE_URL = 'https://tmmwkjqblsigfzvgtf.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_KZflsGXYsR9dWhUaHzZODQ_7geng4fF';
-        
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         let currentProductId = 'web';
         let currentSubTier = 'site';
         let currentLang = 'ru';
@@ -699,57 +1217,225 @@
 
         const translations = {
             ru: {
-                fromText: "от", heroTitle: "Имбовые сайты и дизайн",
-                heroSubtitle: "Выбирай услугу под свои задачи. Премиальный дизайн, адаптивность и плавная анимация.",
+                fromText: "от",
+                heroTitle: "Имбовые сайты и дизайн",
+                heroSubtitle: "Выбирай услугу под свои задачи. Премиальный дизайн, адаптивность под любые устройства и плавная анимация.",
                 filterAll: "Все услуги", filterWeb: "Веб-разработка", filterDesign: "Брендинг",
                 moreBtn: "Подробнее", backBtn: "← Назад к списку", priceTag: "Стоимость услуги",
                 reviewsTitle: "Отзывы клиентов", sendReview: "Отправить отзыв", footerRights: "Все права защищены.",
                 placeholderName: "Ваше имя", placeholderReview: "Ваш отзыв...",
-                tgButton: "Обсудить со мной в Telegram (@lgma_570)", noReviews: "Пока нет отзывов. Будьте первыми!",
+                tgButton: "Обсудить со мной в Telegram (@lgma_570)",
+                noReviews: "Пока нет отзывов. Будьте первыми!",
+                processTag: "Как мы работаем",
+                processTitle: "От стратегии до запуска",
+                processDescWeb: "Ведём проект пошагово: каждый этап заканчивается приёмкой. Сроки и стоимость фиксируем до старта, а на финише передаём исходный код, доступы и обучаем работе с сайтом.",
+                processDescLogo: "Создаём логотип поэтапно: от глубокого анализа бренда и скетчей до финальной детализации и передачи всех векторных исходников.",
+                step1TitleWeb: "Аналитика и стратегия", step1TextWeb: "Изучаем задачи, аудиторию и конкурентов, фиксируем цели и структуру сайта.",
+                step2TitleWeb: "Прототип и дизайн", step2TextWeb: "Проектируем интерфейс под конверсию, создаём уникальный визуальный стиль.",
+                step3TitleWeb: "Разработка", step3TextWeb: "Чистая верстка, программирование, интеграция интерактивных элементов и анимаций.",
+                step4TitleWeb: "Оптимизация", step4TextWeb: "Настраиваем адаптивность под любые устройства, скорость загрузки и базовое SEO.",
+                step5TitleWeb: "Запуск", step5TextWeb: "Перенос на хостинг, проверка работы, передача исходников и полная поддержка.",
+                step1TitleLogo: "Анализ и бриф", step1TextLogo: "Изучаем специфику вашего бизнеса, целевую аудиторию и пожелания по стилю.",
+                step2TitleLogo: "Концепты", step2TextLogo: "Разрабатываем несколько уникальных вариантов дизайна логотипа на выбор.",
+                step3TitleLogo: "Доработка", step3TextLogo: "Утверждаем лучший вариант и дорабатываем детали по вашим правкам.",
+                step4TitleLogo: "Гайдлайн", step4TextLogo: "Формируем правила использования логотипа на различных носителях.",
+                step5TitleLogo: "Передача", step5TextLogo: "Высылаем полный комплект исходных файлов во всех векторных форматах.",
+                infoTag: "О студии",
+                infoTitle: "Разрабатываем цифровые продукты высочайшего качества",
+                infoText: "Respawn Visuals — это современный подбор решений для вашего бизнеса или личного бренда. Мы создаём быстрые сайты с чистой версткой и выразительным дизайном, а также разрабатываем уникальные логотипы, выделяющие вас среди конкурентов. Каждая деталь доводится до идеала: от плавной анимации элементов до удобства работы на смартфонах.",
+                infoFeat1Title: "100% Адаптив", infoFeat1Desc: "Идеальный вид на смартфонах, планшетах и широких мониторах.",
+                infoFeat2Title: "Высокая скорость", infoFeat2Desc: "Чистый оптимизированный код для мгновенной загрузки страниц.",
+                infoFeat3Title: "Прозрачный процесс", infoFeat3Desc: "Сроки и цена фиксируются заранее. Работа сдаётся поэтапно.",
                 tiers: {
-                    site: { name: "Сайт", price: 20000, desc: "Базовый адаптивный сайт с чистым дизайном.", features: ["Адаптивная верстка (ПК, планшеты, телефоны)", "Современный дизайн в темной стилистике", "Быстрая загрузка"] },
-                    sitePlus: { name: "Сайт+", price: 35000, desc: "Расширенный функционал и интерактив.", features: ["Всё из тарифа 'Сайт'", "Интерактивные анимации", "Формы обратной связи"] },
-                    siteUltra: { name: "Сайт Ультра", price: 60000, desc: "Премиум-решение с уникальной графикой.", features: ["Всё из тарифа 'Сайт+'", "Эксклюзивный дизайн", "Приоритетная поддержка"] },
-                    logo: { name: "Логотип", price: 10000, desc: "Стильный логотип для вашего проекта.", features: ["1 концепция логотипа", "Подбор цветов", "Исходники"] },
-                    logoPlus: { name: "Логотип+", price: 18000, desc: "3 варианта концептов и векторные файлы.", features: ["Всё из тарифа 'Логотип'", "3 концепта на выбор", "Векторные файлы (AI, EPS, SVG)"] },
-                    logoUltra: { name: "Логотип Ультра", price: 30000, desc: "Максимальный пакет с гайдлайном.", features: ["Всё из тарифа 'Логотип+'", "Неограниченные правки", "Мини-гайдлайн"] }
+                    site: { name: "Сайт", price: 20000, desc: "Базовый адаптивный сайт с чистым дизайном.", features: ["Адаптивная верстка (ПК, планшеты, телефоны)", "Современный и чистый дизайн в темной стилистике", "Быстрая оптимизация кода и высокая скорость загрузки", "Прямая поддержка и обсуждение правок"] },
+                    sitePlus: { name: "Сайт+", price: 35000, desc: "Расширенный функционал и интерактивные анимации.", features: ["Всё, что входит в тариф 'Сайт'", "Плавные интерактивные анимации при наведении", "Интерактивные элементы интерфейса и формы обратной связи", "Расширенная SEO-оптимизация"] },
+                    siteUltra: { name: "Сайт Ультра", price: 60000, desc: "Премиум-решение с уникальной графикой и максимальной кастомизацией.", features: ["Всё, что входит в тариф 'Сайт+'", "Эксклюзивный индивидуальный дизайн и айдентика", "Продвинутые интерактивные скрипты и высокая сложность", "Приоритетная разработка и техподдержка 24/7"] },
+                    logo: { name: "Логотип", price: 10000, desc: "Базовый стильный логотип для вашего проекта.", features: ["1 уникальная концепция логотипа", "Подбор фирменной цветовой гаммы", "Базовые исходники для соцсетей и веба"] },
+                    logoPlus: { name: "Логотип+", price: 18000, desc: "Несколько вариантов концептов и расширенный набор файлов.", features: ["Всё из тарифа 'Логотип'", "3 уникальных концепта на выбор", "Исходные векторные файлы (AI, EPS, SVG, PNG)", "Варианты адаптации под аватарки и баннеры"] },
+                    logoUltra: { name: "Логотип Ультра", price: 30000, desc: "Максимальный пакет с глубокой проработкой и бренд-гайдом.", features: ["Всё из тарифа 'Логотип+'", "Неограниченные правки на этапе согласования", "Мини-гайдлайн по использованию стиля", "Приоритетная разработка за 24-48 часов"] }
                 },
                 cards: {
-                    web: { name: "Создание сайтов", tag: "Web Dev & UI", sub: "Разработка интерфейсов под ваши задачи." },
-                    branding: { name: "Логотипы", tag: "Logo & Design", sub: "Уникальные логотипы и фирменный стиль." }
+                    web: { name: "Создание сайтов", tag: "Web Dev & UI", sub: "Полноценный адаптивный сайт с интерактивными элементами и высокой производительностью.", basePrice: 20000 },
+                    branding: { name: "Логотипы", tag: "Logo & Design", sub: "Уникальные логотипы, иконки и фирменный стиль для вашего проекта.", basePrice: 10000 }
                 }
             },
             en: {
-                fromText: "from", heroTitle: "Imba Websites & Design",
-                heroSubtitle: "Choose a service for your tasks. Premium design and responsiveness.",
+                fromText: "from",
+                heroTitle: "Imba Websites & Design",
+                heroSubtitle: "Choose a service for your tasks. Premium design, responsiveness across all devices, and smooth animations.",
                 filterAll: "All Services", filterWeb: "Web Dev", filterDesign: "Logos",
                 moreBtn: "Details", backBtn: "← Back to list", priceTag: "Service Price",
                 reviewsTitle: "Client Reviews", sendReview: "Submit Review", footerRights: "All rights reserved.",
                 placeholderName: "Your name", placeholderReview: "Your review...",
-                tgButton: "Discuss with me on Telegram (@lgma_570)", noReviews: "No reviews yet. Be the first!",
+                tgButton: "Discuss with me on Telegram (@lgma_570)",
+                noReviews: "No reviews yet. Be the first!",
+                processTag: "How we work",
+                processTitle: "From strategy to launch",
+                processDescWeb: "We guide the project step-by-step. Deadlines and costs are fixed before starting, and at the finish we hand over the source code and accesses.",
+                processDescLogo: "Creating a logo step-by-step: from deep brand analysis and sketches to final detailing and source files.",
+                step1TitleWeb: "Analytics & Strategy", step1TextWeb: "Studying tasks, audience, and competitors, establishing site goals and structure.",
+                step2TitleWeb: "Prototype & Design", step2TextWeb: "Designing interface for high conversion, creating unique visual identity.",
+                step3TitleWeb: "Development", step3TextWeb: "Clean markup, coding, integration of interactive elements and animations.",
+                step4TitleWeb: "Optimization", step4TextWeb: "Configuring multi-device adaptability, loading speed, and basic SEO.",
+                step5TitleWeb: "Launch", step5TextWeb: "Hosting deployment, final check, source code handover and support.",
+                step1TitleLogo: "Analysis & Brief", step1TextLogo: "Exploring your business specifics, audience, and style preferences.",
+                step2TitleLogo: "Concepts", step2TextLogo: "Developing several unique logo design options to choose from.",
+                step3TitleLogo: "Revision", step3TextLogo: "Approving the best option and refining details based on your feedback.",
+                step4TitleLogo: "Guidelines", step4TextLogo: "Setting up rules for logo usage across different media.",
+                step5TitleLogo: "Handover", step5TextLogo: "Sending a full set of source files in all vector formats.",
+                infoTag: "About Us",
+                infoTitle: "We develop high-quality digital products",
+                infoText: "Respawn Visuals offers modern solutions for your business or personal brand. We build fast websites with clean code and striking design, as well as unique logos that stand out from competitors. Every detail is brought to perfection: from smooth element animations to effortless mobile usability.",
+                infoFeat1Title: "100% Adaptive", infoFeat1Desc: "Flawless view on phones, tablets, and wide monitors.",
+                infoFeat2Title: "High Speed", infoFeat2Desc: "Clean optimized code for instant page loading.",
+                infoFeat3Title: "Transparent Process", infoFeat3Desc: "Fixed timelines and costs upfront. Phased delivery.",
                 tiers: {
-                    site: { name: "Website", price: 20000, desc: "Basic adaptive website.", features: ["Adaptive layout", "Modern dark design", "Fast loading"] },
-                    sitePlus: { name: "Website+", price: 35000, desc: "Extended functionality.", features: ["Everything in 'Website'", "Interactive animations", "Feedback forms"] },
-                    siteUltra: { name: "Website Ultra", price: 60000, desc: "Premium custom solution.", features: ["Everything in 'Website+'", "Exclusive design", "Priority support"] },
-                    logo: { name: "Logo", price: 10000, desc: "Stylish logo for your project.", features: ["1 logo concept", "Color palette", "Source files"] },
-                    logoPlus: { name: "Logo+", price: 18000, desc: "3 concepts and vector files.", features: ["Everything in 'Logo'", "3 concepts to choose", "Vector formats"] },
-                    logoUltra: { name: "Logo Ultra", price: 30000, desc: "Max package with brand guide.", features: ["Everything in 'Logo+'", "Unlimited revisions", "Brand guidelines"] }
+                    site: { name: "Website", price: 20000, desc: "Basic adaptive website with clean design.", features: ["Adaptive layout (PC, tablets, phones)", "Modern dark design", "Fast code optimization and high speed", "Direct support and revision discussions"] },
+                    sitePlus: { name: "Website+", price: 35000, desc: "Extended functionality and interactive animations.", features: ["Everything in 'Website'", "Smooth interactive hover animations", "Interactive UI elements & feedback forms", "Advanced SEO optimization"] },
+                    siteUltra: { name: "Website Ultra", price: 60000, desc: "Premium solution with unique graphics and max customization.", features: ["Everything in 'Website+'", "Exclusive custom design & identity", "Advanced interactive scripts & high complexity", "Priority dev & 24/7 support"] },
+                    logo: { name: "Logo", price: 10000, desc: "Basic stylish logo for your project.", features: ["1 unique logo concept", "Brand color palette selection", "Basic source files for social media and web"] },
+                    logoPlus: { name: "Logo+", price: 18000, desc: "Multiple concept options and expanded file set.", features: ["Everything in 'Logo'", "3 unique concepts to choose from", "Vector source files (AI, EPS, SVG, PNG)", "Avatar and banner adaptations"] },
+                    logoUltra: { name: "Logo Ultra", price: 30000, desc: "Maximum package with deep elaboration and brand guide.", features: ["Everything in 'Logo+'", "Unlimited revisions during approval", "Mini style guide for usage", "Priority development in 24-48 hours"] }
                 },
                 cards: {
-                    web: { name: "Website Creation", tag: "Web Dev & UI", sub: "Interface development for your tasks." },
-                    branding: { name: "Logos", tag: "Logo & Design", sub: "Unique logos and branding." }
+                    web: { name: "Website Creation", tag: "Web Dev & UI", sub: "Full adaptive website with interactive elements and high performance.", basePrice: 20000 },
+                    branding: { name: "Logos", tag: "Logo & Design", sub: "Unique logos, icons, and branding for your project.", basePrice: 10000 }
                 }
             }
         };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currDropdown = document.getElementById('currDropdown');
+            const langDropdown = document.getElementById('langDropdown');
+
+            document.getElementById('currBtn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                langDropdown.classList.remove('active');
+                currDropdown.classList.toggle('active');
+            });
+
+            document.getElementById('langBtn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                currDropdown.classList.remove('active');
+                langDropdown.classList.toggle('active');
+            });
+
+            document.addEventListener('click', () => {
+                currDropdown.classList.remove('active');
+                langDropdown.classList.remove('active');
+            });
+
+            currDropdown.querySelectorAll('.mini-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const curr = item.getAttribute('data-curr');
+                    const label = item.getAttribute('data-label');
+                    
+                    currDropdown.querySelectorAll('.mini-item').forEach(b => b.classList.remove('active'));
+                    item.classList.add('active');
+                    
+                    setCurrency(curr, label);
+                    currDropdown.classList.remove('active');
+                });
+            });
+
+            langDropdown.querySelectorAll('.mini-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const lang = item.getAttribute('data-lang');
+                    const label = item.getAttribute('data-label');
+                    
+                    langDropdown.querySelectorAll('.mini-item').forEach(b => b.classList.remove('active'));
+                    item.classList.add('active');
+                    
+                    setLanguage(lang, label);
+                    langDropdown.classList.remove('active');
+                });
+            });
+        });
+
+        function setLanguage(lang, label) {
+            currentLang = lang;
+            document.getElementById('langLabel').innerText = label;
+
+            document.body.removeAttribute('dir');
+
+            const t = translations[lang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.innerText = t[key];
+            });
+
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (t[key]) el.setAttribute('placeholder', t[key]);
+            });
+
+            const grid = document.getElementById('servicesGrid');
+            const cards = grid.children;
+            const keys = ['web', 'branding'];
+            const currentSymbol = symbols[currentCurr];
+            const fromWord = t.fromText || 'от';
+
+            for (let i = 0; i < cards.length; i++) {
+                const k = keys[i];
+                if (t.cards[k]) {
+                    cards[i].querySelector('.card-tag').innerText = t.cards[k].tag;
+                    cards[i].querySelector('.card-name').innerText = t.cards[k].name;
+                    cards[i].querySelector('.card-desc').innerText = t.cards[k].sub;
+                }
+            }
+
+            const baseWeb = translations.ru.tiers.site.price;
+            const convertedWeb = Math.round(baseWeb * rates[currentCurr]);
+            cards[0].querySelector('.card-price').innerText = `${fromWord} ${convertedWeb.toLocaleString()} ${currentSymbol}`;
+
+            const baseLogo = translations.ru.tiers.logo.price;
+            const convertedLogo = Math.round(baseLogo * rates[currentCurr]);
+            cards[1].querySelector('.card-price').innerText = `${fromWord} ${convertedLogo.toLocaleString()} ${currentSymbol}`;
+
+            if (document.getElementById('detailPage').classList.contains('active')) {
+                updateDetailContent(currentProductId);
+                renderReviews(currentProductId);
+            }
+        }
+
+        function setCurrency(curr, label) {
+            currentCurr = curr;
+            document.getElementById('currLabel').innerText = label;
+
+            const grid = document.getElementById('servicesGrid');
+            const cards = grid.children;
+            const t = translations[currentLang];
+            const fromWord = t.fromText || 'от';
+
+            const baseWeb = translations.ru.tiers.site.price;
+            const convertedWeb = Math.round(baseWeb * rates[curr]);
+            cards[0].querySelector('.card-price').innerText = `${fromWord} ${convertedWeb.toLocaleString()} ${symbols[curr]}`;
+
+            const baseLogo = translations.ru.tiers.logo.price;
+            const convertedLogo = Math.round(baseLogo * rates[curr]);
+            cards[1].querySelector('.card-price').innerText = `${fromWord} ${convertedLogo.toLocaleString()} ${symbols[curr]}`;
+
+            if (document.getElementById('detailPage').classList.contains('active')) {
+                updateDetailPrice();
+                renderSubOptions();
+            }
+        }
 
         function filterCards(cat, evt) {
             if (evt && evt.target) {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 evt.target.classList.add('active');
             }
+
             const cards = document.getElementById('servicesGrid').children;
             for (let card of cards) {
-                card.style.display = (cat === 'all' || card.getAttribute('data-category') === cat) ? 'flex' : 'none';
+                if (cat === 'all' || card.getAttribute('data-category') === cat) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
             }
         }
 
@@ -780,6 +1466,32 @@
             
             renderSubOptions();
             updateSubTierDetails(currentSubTier);
+
+            if (productId === 'web') {
+                document.getElementById('processDescText').innerText = t.processDescWeb;
+                document.getElementById('step1Title').innerText = t.step1TitleWeb;
+                document.getElementById('step1Text').innerText = t.step1TextWeb;
+                document.getElementById('step2Title').innerText = t.step2TitleWeb;
+                document.getElementById('step2Text').innerText = t.step2TextWeb;
+                document.getElementById('step3Title').innerText = t.step3TitleWeb;
+                document.getElementById('step3Text').innerText = t.step3TextWeb;
+                document.getElementById('step4Title').innerText = t.step4TitleWeb;
+                document.getElementById('step4Text').innerText = t.step4TextWeb;
+                document.getElementById('step5Title').innerText = t.step5TitleWeb;
+                document.getElementById('step5Text').innerText = t.step5TextWeb;
+            } else {
+                document.getElementById('processDescText').innerText = t.processDescLogo;
+                document.getElementById('step1Title').innerText = t.step1TitleLogo;
+                document.getElementById('step1Text').innerText = t.step1TextLogo;
+                document.getElementById('step2Title').innerText = t.step2TitleLogo;
+                document.getElementById('step2Text').innerText = t.step2TextLogo;
+                document.getElementById('step3Title').innerText = t.step3TitleLogo;
+                document.getElementById('step3Text').innerText = t.step3TextLogo;
+                document.getElementById('step4Title').innerText = t.step4TitleLogo;
+                document.getElementById('step4Text').innerText = t.step4TextLogo;
+                document.getElementById('step5Title').innerText = t.step5TitleLogo;
+                document.getElementById('step5Text').innerText = t.step5TextLogo;
+            }
         }
 
         function renderSubOptions() {
@@ -787,7 +1499,9 @@
             const grid = document.getElementById('subOptionsGrid');
             grid.innerHTML = '';
 
-            const tiersKeys = (currentProductId === 'web') ? ['site', 'sitePlus', 'siteUltra'] : ['logo', 'logoPlus', 'logoUltra'];
+            const tiersKeys = (currentProductId === 'web') 
+                ? ['site', 'sitePlus', 'siteUltra'] 
+                : ['logo', 'logoPlus', 'logoUltra'];
 
             tiersKeys.forEach(key => {
                 const tier = t.tiers[key];
@@ -796,11 +1510,7 @@
 
                 const card = document.createElement('div');
                 card.className = `sub-option-card ${currentSubTier === key ? 'active' : ''}`;
-                card.onclick = () => {
-                    currentSubTier = key;
-                    renderSubOptions();
-                    updateSubTierDetails(key);
-                };
+                card.onclick = () => selectSubTier(key);
 
                 card.innerHTML = `
                     <div>
@@ -813,14 +1523,18 @@
             });
         }
 
+        function selectSubTier(tierKey) {
+            currentSubTier = tierKey;
+            renderSubOptions();
+            updateSubTierDetails(tierKey);
+        }
+
         function updateSubTierDetails(tierKey) {
             const t = translations[currentLang];
             const tierData = t.tiers[tierKey];
 
             document.getElementById('detailSub').innerText = tierData.desc;
-            const base = translations.ru.tiers[tierKey].price;
-            const converted = Math.round(base * rates[currentCurr]);
-            document.getElementById('detailPrice').innerText = `${converted.toLocaleString()} ${symbols[currentCurr]}`;
+            updateDetailPrice();
 
             const list = document.getElementById('detailFeaturesList');
             list.innerHTML = '';
@@ -831,31 +1545,40 @@
             });
         }
 
-        // Загрузка отзывов
-        async function renderReviews(productId) {
-            const listEl = document.getElementById('reviewsList');
-            const t = translations[currentLang];
-            listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;">Загрузка...</p>`;
+        function updateDetailPrice() {
+            const base = translations.ru.tiers[currentSubTier].price;
+            const converted = Math.round(base * rates[currentCurr]);
+            document.getElementById('detailPrice').innerText = `${converted.toLocaleString()} ${symbols[currentCurr]}`;
+        }
 
-            const { data: productReviews, error } = await supabaseClient
-                .from('reviews')
-                .select('*')
-                .eq('product_id', productId)
-                .order('created_at', { ascending: false });
-
-            if (error) {
-                console.error("Ошибка при получении отзывов:", error);
-                listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;">Не удалось загрузить отзывы.</p>`;
-                return;
+        function getStoredReviews() {
+            try {
+                const data = localStorage.getItem('respawn_reviews');
+                return data ? JSON.parse(data) : {};
+            } catch(e) {
+                return {};
             }
+        }
 
-            if (!productReviews || productReviews.length === 0) {
-                listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;">${t.noReviews}</p>`;
+        function saveReviewsData(reviewsObj) {
+            try {
+                localStorage.setItem('respawn_reviews', JSON.stringify(reviewsObj));
+            } catch(e) {}
+        }
+
+        function renderReviews(productId) {
+            const listEl = document.getElementById('reviewsList');
+            const allReviews = getStoredReviews();
+            const productReviews = allReviews[productId] || [];
+            const t = translations[currentLang];
+
+            if (productReviews.length === 0) {
+                listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;" data-i18n="noReviews">${t.noReviews}</p>`;
                 return;
             }
 
             listEl.innerHTML = '';
-            productReviews.forEach(rev => {
+            [...productReviews].reverse().forEach(rev => {
                 const card = document.createElement('div');
                 card.className = 'review-card';
                 card.innerHTML = `
@@ -866,33 +1589,23 @@
             });
         }
 
-        // Отправка отзыва
-        async function submitReview(event) {
+        function submitReview(event) {
             event.preventDefault();
             const authorInput = document.getElementById('reviewAuthor');
             const textInput = document.getElementById('reviewText');
-            const submitBtn = document.getElementById('submitBtn');
 
             const author = authorInput.value.trim();
             const text = textInput.value.trim();
 
             if (!author || !text) return;
 
-            submitBtn.disabled = true;
-
-            const { error } = await supabaseClient
-                .from('reviews')
-                .insert([
-                    { product_id: currentProductId, author: author, text: text }
-                ]);
-
-            submitBtn.disabled = false;
-
-            if (error) {
-                console.error("Ошибка отправки:", error);
-                alert("Не удалось отправить отзыв. Проверьте выполнение SQL-кода RLS в Supabase.");
-                return;
+            const allReviews = getStoredReviews();
+            if (!allReviews[currentProductId]) {
+                allReviews[currentProductId] = [];
             }
+            
+            allReviews[currentProductId].push({ author, text, date: Date.now() });
+            saveReviewsData(allReviews);
 
             authorInput.value = '';
             textInput.value = '';
