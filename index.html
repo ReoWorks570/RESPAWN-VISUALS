@@ -6,9 +6,8 @@
     <title id="pageTitle">Respawn Visuals — Веб-разработка & Дизайн</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Firebase Cloud Storage Integration -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <!-- Подключаем Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root {
@@ -367,6 +366,11 @@
 
         .action-btn:active {
             transform: scale(0.98);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .card:hover .action-btn {
@@ -1198,7 +1202,7 @@
                     <form class="review-form" id="reviewForm" onsubmit="submitReview(event)">
                         <input type="text" id="reviewAuthor" class="review-input" data-i18n-placeholder="placeholderName" placeholder="Ваше имя" required>
                         <textarea id="reviewText" class="review-textarea" data-i18n-placeholder="placeholderReview" placeholder="Ваш отзыв..." required></textarea>
-                        <button type="submit" class="action-btn" id="submitBtn" style="align-self: flex-start;" data-i18n="sendReview">Отправить отзыв</button>
+                        <button type="submit" id="submitBtn" class="action-btn" style="align-self: flex-start;" data-i18n="sendReview">Отправить отзыв</button>
                     </form>
 
                     <div class="reviews-list" id="reviewsList"></div>
@@ -1212,20 +1216,10 @@
     </footer>
 
     <script>
-        // --- Firebase Cloud Initialization ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyD-YourCloudKeyHereForRespawnVisuals",
-            authDomain: "respawn-visuals.firebaseapp.com",
-            projectId: "respawn-visuals",
-            storageBucket: "respawn-visuals.appspot.com",
-            messagingSenderId: "109823749823",
-            appId: "1:109823749823:web:a1b2c3d4e5f6g7h8"
-        };
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const db = firebase.firestore();
+        // Инициализация клиентом Supabase
+        const SUPABASE_URL = 'https://tmmwkjqblsigfzjzvgtf.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_KZflsGXYsR9dWhUaHzZODQ_7geng4fF';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentProductId = 'web';
         let currentSubTier = 'site';
@@ -1416,7 +1410,7 @@
 
             if (document.getElementById('detailPage').classList.contains('active')) {
                 updateDetailContent(currentProductId);
-                listenCloudReviews(currentProductId);
+                renderReviews(currentProductId);
             }
         }
 
@@ -1467,7 +1461,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
             updateDetailContent(productId);
-            listenCloudReviews(productId);
+            renderReviews(productId);
         }
 
         function closeDetails() {
@@ -1571,42 +1565,42 @@
             document.getElementById('detailPrice').innerText = `${converted.toLocaleString()} ${symbols[currentCurr]}`;
         }
 
-        // --- Realtime Cloud Reviews Sync ---
-        let reviewsUnsubscribe = null;
-
-        function listenCloudReviews(productId) {
+        // Загрузка отзывов из Supabase
+        async function renderReviews(productId) {
             const listEl = document.getElementById('reviewsList');
             const t = translations[currentLang];
+            listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;">Загрузка отзывов...</p>`;
 
-            if (reviewsUnsubscribe) {
-                reviewsUnsubscribe();
+            const { data: productReviews, error } = await supabaseClient
+                .from('reviews')
+                .select('*')
+                .eq('product_id', productId)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error("Ошибка загрузки отзывов:", error);
+                listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;">Ошибка при загрузке отзывов</p>`;
+                return;
             }
 
-            reviewsUnsubscribe = db.collection('reviews')
-                .where('productId', '==', productId)
-                .orderBy('timestamp', 'desc')
-                .onSnapshot((snapshot) => {
-                    if (snapshot.empty) {
-                        listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;" data-i18n="noReviews">${t.noReviews}</p>`;
-                        return;
-                    }
+            if (!productReviews || productReviews.length === 0) {
+                listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;" data-i18n="noReviews">${t.noReviews}</p>`;
+                return;
+            }
 
-                    listEl.innerHTML = '';
-                    snapshot.forEach(doc => {
-                        const rev = doc.data();
-                        const card = document.createElement('div');
-                        card.className = 'review-card';
-                        card.innerHTML = `
-                            <div class="review-author">${escapeHtml(rev.author)}</div>
-                            <div class="review-text">${escapeHtml(rev.text)}</div>
-                        `;
-                        listEl.appendChild(card);
-                    });
-                }, (error) => {
-                    console.error("Cloud database sync notice:", error);
-                });
+            listEl.innerHTML = '';
+            productReviews.forEach(rev => {
+                const card = document.createElement('div');
+                card.className = 'review-card';
+                card.innerHTML = `
+                    <div class="review-author">${escapeHtml(rev.author)}</div>
+                    <div class="review-text">${escapeHtml(rev.text)}</div>
+                `;
+                listEl.appendChild(card);
+            });
         }
 
+        // Отправка отзыва в Supabase
         async function submitReview(event) {
             event.preventDefault();
             const authorInput = document.getElementById('reviewAuthor');
@@ -1620,25 +1614,26 @@
 
             submitBtn.disabled = true;
 
-            try {
-                await db.collection('reviews').add({
-                    productId: currentProductId,
-                    author: author,
-                    text: text,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
+            const { error } = await supabaseClient
+                .from('reviews')
+                .insert([
+                    { product_id: currentProductId, author: author, text: text }
+                ]);
 
-                authorInput.value = '';
-                textInput.value = '';
-            } catch (e) {
-                alert("Ошибка отправки отзыва в облако. Проверьте соединение.");
-            } finally {
-                submitBtn.disabled = false;
+            submitBtn.disabled = false;
+
+            if (error) {
+                console.error("Ошибка отправки отзыва:", error);
+                alert("Произошла ошибка при отправке отзыва.");
+                return;
             }
+
+            authorInput.value = '';
+            textInput.value = '';
+            renderReviews(currentProductId);
         }
 
         function escapeHtml(str) {
-            if(!str) return '';
             return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
     </script>
