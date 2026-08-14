@@ -814,10 +814,34 @@
             padding-top: 30px;
         }
 
+        .reviews-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
         .reviews-title {
             font-size: 20px;
             font-weight: 700;
-            margin-bottom: 20px;
+        }
+
+        .reviews-avg {
+            font-size: 14px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+        }
+
+        .avg-stars {
+            color: #f59e0b;
         }
 
         .review-form {
@@ -825,6 +849,37 @@
             flex-direction: column;
             gap: 12px;
             margin-bottom: 30px;
+        }
+
+        .rating-select {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+        }
+
+        .rating-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-right: 6px;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .star-rating .star {
+            font-size: 20px;
+            color: #4b5563;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .star-rating .star:hover,
+        .star-rating .star.selected {
+            color: #f59e0b;
+            transform: scale(1.1);
         }
 
         .review-input, .review-textarea {
@@ -892,16 +947,50 @@
             opacity: 1;
         }
 
+        .review-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
         .review-author {
             font-weight: 700;
             font-size: 14px;
             color: var(--primary);
-            margin-bottom: 6px;
             transition: color 0.3s ease;
         }
 
         .review-card:hover .review-author {
             color: #a78bfa;
+        }
+
+        .review-card-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-stars {
+            color: #f59e0b;
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        .delete-review-btn {
+            background: transparent;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 16px;
+            opacity: 0.6;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            line-height: 1;
+        }
+
+        .delete-review-btn:hover {
+            opacity: 1;
+            transform: scale(1.2);
         }
 
         .review-text {
@@ -1188,9 +1277,25 @@
                 </a>
 
                 <div class="reviews-container">
-                    <h3 class="reviews-title" data-i18n="reviewsTitle">Отзывы клиентов</h3>
+                    <div class="reviews-header">
+                        <h3 class="reviews-title" data-i18n="reviewsTitle">Отзывы клиентов</h3>
+                        <div class="reviews-avg" id="reviewsAvg">
+                            <span id="avgScore">5.0</span>
+                            <span class="avg-stars" id="avgStars">★★★★★</span>
+                        </div>
+                    </div>
                     
                     <form class="review-form" id="reviewForm" onsubmit="submitReview(event)">
+                        <div class="rating-select">
+                            <span class="rating-label" data-i18n="ratingLabel">Ваша оценка:</span>
+                            <div class="star-rating" id="starRating">
+                                <span class="star selected" data-value="1">★</span>
+                                <span class="star selected" data-value="2">★</span>
+                                <span class="star selected" data-value="3">★</span>
+                                <span class="star selected" data-value="4">★</span>
+                                <span class="star selected" data-value="5">★</span>
+                            </div>
+                        </div>
                         <input type="text" id="reviewAuthor" class="review-input" data-i18n-placeholder="placeholderName" placeholder="Ваше имя" required>
                         <textarea id="reviewText" class="review-textarea" data-i18n-placeholder="placeholderReview" placeholder="Ваш отзыв..." required></textarea>
                         <button type="submit" class="action-btn" style="align-self: flex-start;" data-i18n="sendReview">Отправить отзыв</button>
@@ -1211,6 +1316,7 @@
         let currentSubTier = 'site';
         let currentLang = 'ru';
         let currentCurr = 'KZT';
+        let selectedRating = 5;
 
         const rates = { KZT: 1, RUB: 0.20, USD: 0.0021, EUR: 0.0019 };
         const symbols = { KZT: '₸', RUB: '₽', USD: '$', EUR: '€' };
@@ -1233,6 +1339,15 @@
             }
         }
 
+        function getUserId() {
+            let uid = safeGetStorage('respawn_uid');
+            if (!uid) {
+                uid = 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+                safeSetStorage('respawn_uid', uid);
+            }
+            return uid;
+        }
+
         const translations = {
             ru: {
                 fromText: "от",
@@ -1244,6 +1359,7 @@
                 placeholderName: "Ваше имя", placeholderReview: "Ваш отзыв...",
                 tgButton: "Обсудить со мной в Telegram (@lgma_570)",
                 noReviews: "Пока нет отзывов. Будьте первыми!",
+                ratingLabel: "Ваша оценка:",
                 processTag: "Как мы работаем",
                 processTitle: "От стратегии до запуска",
                 processDescWeb: "Ведём проект пошагово: каждый этап заканчивается приёмкой. Сроки и стоимость фиксируем до старта, а на финише передаём исходный код, доступы и обучаем работе с сайтом.",
@@ -1287,6 +1403,7 @@
                 placeholderName: "Your name", placeholderReview: "Your review...",
                 tgButton: "Discuss with me on Telegram (@lgma_570)",
                 noReviews: "No reviews yet. Be the first!",
+                ratingLabel: "Your rating:",
                 processTag: "How we work",
                 processTitle: "From strategy to launch",
                 processDescWeb: "We guide the project step-by-step. Deadlines and costs are fixed before starting, and at the finish we hand over the source code and accesses.",
@@ -1378,6 +1495,22 @@
                     });
                 });
             }
+
+            document.querySelectorAll('.star').forEach(star => {
+                star.addEventListener('click', (e) => {
+                    selectedRating = parseInt(e.target.getAttribute('data-value'));
+                    document.querySelectorAll('.star').forEach(s => {
+                        const val = parseInt(s.getAttribute('data-value'));
+                        if (val <= selectedRating) {
+                            s.classList.add('selected');
+                            s.style.color = '#f59e0b';
+                        } else {
+                            s.classList.remove('selected');
+                            s.style.color = '#4b5563';
+                        }
+                    });
+                });
+            });
         });
 
         function setLanguage(lang, label) {
@@ -1592,25 +1725,58 @@
 
         function renderReviews(productId) {
             const listEl = document.getElementById('reviewsList');
+            const avgScoreEl = document.getElementById('avgScore');
+            const avgStarsEl = document.getElementById('avgStars');
             const allReviews = getStoredReviews();
             const productReviews = allReviews[productId] || [];
             const t = translations[currentLang];
 
             if (productReviews.length === 0) {
                 listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;" data-i18n="noReviews">${t.noReviews}</p>`;
+                avgScoreEl.innerText = "0.0";
+                avgStarsEl.innerText = "☆☆☆☆☆";
                 return;
             }
 
             listEl.innerHTML = '';
-            [...productReviews].reverse().forEach(rev => {
+            let totalRating = 0;
+
+            [...productReviews].reverse().forEach((rev, index) => {
+                totalRating += rev.rating || 5;
+                const trueIndex = productReviews.length - 1 - index;
+                
+                let starsHtml = '';
+                for(let i=1; i<=5; i++) {
+                    starsHtml += i <= (rev.rating || 5) ? '★' : '☆';
+                }
+
+                const isOwner = rev.uid === getUserId();
+                const deleteBtn = isOwner ? `<button type="button" class="delete-review-btn" onclick="deleteReview('${productId}', ${trueIndex})">×</button>` : '';
+
                 const card = document.createElement('div');
                 card.className = 'review-card';
                 card.innerHTML = `
-                    <div class="review-author">${escapeHtml(rev.author)}</div>
+                    <div class="review-card-top">
+                        <div class="review-author">${escapeHtml(rev.author)}</div>
+                        <div class="review-card-right">
+                            <div class="review-stars">${starsHtml}</div>
+                            ${deleteBtn}
+                        </div>
+                    </div>
                     <div class="review-text">${escapeHtml(rev.text)}</div>
                 `;
                 listEl.appendChild(card);
             });
+
+            const avg = (totalRating / productReviews.length).toFixed(1);
+            avgScoreEl.innerText = avg;
+            
+            let roundedAvg = Math.round(avg);
+            let mainStars = '';
+            for(let i=1; i<=5; i++) {
+                mainStars += i <= roundedAvg ? '★' : '☆';
+            }
+            avgStarsEl.innerText = mainStars;
         }
 
         function submitReview(event) {
@@ -1628,12 +1794,29 @@
                 allReviews[currentProductId] = [];
             }
             
-            allReviews[currentProductId].push({ author, text, date: Date.now() });
+            allReviews[currentProductId].push({ 
+                author, 
+                text, 
+                rating: selectedRating,
+                uid: getUserId(),
+                date: Date.now() 
+            });
             saveReviewsData(allReviews);
 
             authorInput.value = '';
             textInput.value = '';
             renderReviews(currentProductId);
+        }
+
+        function deleteReview(productId, index) {
+            const allReviews = getStoredReviews();
+            if (allReviews[productId] && allReviews[productId][index]) {
+                if (allReviews[productId][index].uid === getUserId()) {
+                    allReviews[productId].splice(index, 1);
+                    saveReviewsData(allReviews);
+                    renderReviews(productId);
+                }
+            }
         }
 
         function escapeHtml(str) {
