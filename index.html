@@ -1215,6 +1215,25 @@
         const rates = { KZT: 1, RUB: 0.20, USD: 0.0021, EUR: 0.0019 };
         const symbols = { KZT: '₸', RUB: '₽', USD: '$', EUR: '€' };
 
+        // Резервное хранилище для режима инкогнито / заблокированного localStorage
+        let memoryStorage = {};
+
+        function safeGetStorage(key) {
+            try {
+                return localStorage.getItem(key);
+            } catch(e) {
+                return memoryStorage[key] || null;
+            }
+        }
+
+        function safeSetStorage(key, value) {
+            try {
+                localStorage.setItem(key, value);
+            } catch(e) {
+                memoryStorage[key] = value;
+            }
+        }
+
         const translations = {
             ru: {
                 fromText: "от",
@@ -1308,56 +1327,63 @@
             const currDropdown = document.getElementById('currDropdown');
             const langDropdown = document.getElementById('langDropdown');
 
-            document.getElementById('currBtn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                langDropdown.classList.remove('active');
-                currDropdown.classList.toggle('active');
-            });
+            if(document.getElementById('currBtn')) {
+                document.getElementById('currBtn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    langDropdown.classList.remove('active');
+                    currDropdown.classList.toggle('active');
+                });
+            }
 
-            document.getElementById('langBtn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                currDropdown.classList.remove('active');
-                langDropdown.classList.toggle('active');
-            });
+            if(document.getElementById('langBtn')) {
+                document.getElementById('langBtn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    currDropdown.classList.remove('active');
+                    langDropdown.classList.toggle('active');
+                });
+            }
 
             document.addEventListener('click', () => {
-                currDropdown.classList.remove('active');
-                langDropdown.classList.remove('active');
+                if(currDropdown) currDropdown.classList.remove('active');
+                if(langDropdown) langDropdown.classList.remove('active');
             });
 
-            currDropdown.querySelectorAll('.mini-item').forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const curr = item.getAttribute('data-curr');
-                    const label = item.getAttribute('data-label');
-                    
-                    currDropdown.querySelectorAll('.mini-item').forEach(b => b.classList.remove('active'));
-                    item.classList.add('active');
-                    
-                    setCurrency(curr, label);
-                    currDropdown.classList.remove('active');
+            if(currDropdown) {
+                currDropdown.querySelectorAll('.mini-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const curr = item.getAttribute('data-curr');
+                        const label = item.getAttribute('data-label');
+                        
+                        currDropdown.querySelectorAll('.mini-item').forEach(b => b.classList.remove('active'));
+                        item.classList.add('active');
+                        
+                        setCurrency(curr, label);
+                        currDropdown.classList.remove('active');
+                    });
                 });
-            });
+            }
 
-            langDropdown.querySelectorAll('.mini-item').forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const lang = item.getAttribute('data-lang');
-                    const label = item.getAttribute('data-label');
-                    
-                    langDropdown.querySelectorAll('.mini-item').forEach(b => b.classList.remove('active'));
-                    item.classList.add('active');
-                    
-                    setLanguage(lang, label);
-                    langDropdown.classList.remove('active');
+            if(langDropdown) {
+                langDropdown.querySelectorAll('.mini-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const lang = item.getAttribute('data-lang');
+                        const label = item.getAttribute('data-label');
+                        
+                        langDropdown.querySelectorAll('.mini-item').forEach(b => b.classList.remove('active'));
+                        item.classList.add('active');
+                        
+                        setLanguage(lang, label);
+                        langDropdown.classList.remove('active');
+                    });
                 });
-            });
+            }
         });
 
         function setLanguage(lang, label) {
             currentLang = lang;
             document.getElementById('langLabel').innerText = label;
-
             document.body.removeAttribute('dir');
 
             const t = translations[lang];
@@ -1552,18 +1578,17 @@
         }
 
         function getStoredReviews() {
+            const data = safeGetStorage('respawn_reviews');
+            if(!data) return {};
             try {
-                const data = localStorage.getItem('respawn_reviews');
-                return data ? JSON.parse(data) : {};
+                return JSON.parse(data);
             } catch(e) {
                 return {};
             }
         }
 
         function saveReviewsData(reviewsObj) {
-            try {
-                localStorage.setItem('respawn_reviews', JSON.stringify(reviewsObj));
-            } catch(e) {}
+            safeSetStorage('respawn_reviews', JSON.stringify(reviewsObj));
         }
 
         function renderReviews(productId) {
