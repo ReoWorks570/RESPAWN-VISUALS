@@ -1215,7 +1215,6 @@
         const rates = { KZT: 1, RUB: 0.20, USD: 0.0021, EUR: 0.0019 };
         const symbols = { KZT: '₸', RUB: '₽', USD: '$', EUR: '€' };
 
-        // Резервное хранилище для режима инкогнито / заблокированного localStorage
         let memoryStorage = {};
 
         function safeGetStorage(key) {
@@ -1330,7 +1329,7 @@
             if(document.getElementById('currBtn')) {
                 document.getElementById('currBtn').addEventListener('click', (e) => {
                     e.stopPropagation();
-                    langDropdown.classList.remove('active');
+                    if(langDropdown) langDropdown.classList.remove('active');
                     currDropdown.classList.toggle('active');
                 });
             }
@@ -1338,7 +1337,7 @@
             if(document.getElementById('langBtn')) {
                 document.getElementById('langBtn').addEventListener('click', (e) => {
                     e.stopPropagation();
-                    currDropdown.classList.remove('active');
+                    if(currDropdown) currDropdown.classList.remove('active');
                     langDropdown.classList.toggle('active');
                 });
             }

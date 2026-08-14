@@ -276,7 +276,6 @@ body {
     cursor: pointer;
     margin-bottom: 24px;
     transition: var(--transition);
-
 }
 
 .btn-back:hover {
