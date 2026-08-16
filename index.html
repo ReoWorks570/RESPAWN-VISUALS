@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">Respawn Visuals — Веб-разработка & Дизайн</title>
+    <title id="pageTitle">Respawn Visuals — Веб-разработка, Монтаж & Дизайн</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -1071,6 +1071,7 @@
             <div class="filter-tabs">
                 <button type="button" class="filter-btn active" onclick="filterCards('all', event)" data-i18n="filterAll">Все услуги</button>
                 <button type="button" class="filter-btn" onclick="filterCards('web', event)" data-i18n="filterWeb">Веб-разработка</button>
+                <button type="button" class="filter-btn" onclick="filterCards('video', event)" data-i18n="filterVideo">Видеомонтаж</button>
                 <button type="button" class="filter-btn" onclick="filterCards('design', event)" data-i18n="filterDesign">Брендинг</button>
             </div>
 
@@ -1083,6 +1084,18 @@
                     </div>
                     <div class="card-footer">
                         <span class="card-price" data-price="20000">от 20 000 ₸</span>
+                        <button type="button" class="action-btn" data-i18n="moreBtn">Подробнее</button>
+                    </div>
+                </div>
+
+                <div class="card" data-category="video" onclick="openDetails('shorts')">
+                    <div>
+                        <div class="card-tag">Video & Reels</div>
+                        <div class="card-name" data-i18n="card3Name">Shorts, TikTok, Instagram</div>
+                        <div class="card-desc" data-i18n="card3Desc">Динамичный монтаж вертикальных видео, эффектные субтитры и звуковой дизайн для соцсетей.</div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-price" data-price="2000">от 2 000 ₸</span>
                         <button type="button" class="action-btn" data-i18n="moreBtn">Подробнее</button>
                     </div>
                 </div>
@@ -1105,7 +1118,7 @@
                     <div class="card-tag" data-i18n="infoTag">О студии</div>
                     <h2 class="info-title" data-i18n="infoTitle">Разрабатываем цифровые продукты высочайшего качества</h2>
                     <p class="info-text" data-i18n="infoText">
-                        Respawn Visuals — это современный подбор решений для вашего бизнеса или личного бренда. Мы создаём быстрые сайты с чистой версткой и выразительным дизайном, а также разрабатываем уникальные логотипы, выделяющие вас среди конкурентов. Каждая деталь доводится до идеала: от плавной анимации элементов до удобства работы на смартфонах.
+                        Respawn Visuals — это современный подбор решений для вашего бизнеса или личного бренда. Мы создаём быстрые сайты с чистой версткой и выразительным дизайном, занимаемся сочным монтажом видео для Shorts/TikTok, а также разрабатываем уникальные логотипы, выделяющие вас среди конкурентов. Каждая деталь доводится до идеала: от плавной анимации элементов до удобства работы на смартфонах.
                     </p>
                     <div class="info-features">
                         <div class="info-feature-item">
@@ -1220,7 +1233,7 @@
                 fromText: "от",
                 heroTitle: "Имбовые сайты и дизайн",
                 heroSubtitle: "Выбирай услугу под свои задачи. Премиальный дизайн, адаптивность под любые устройства и плавная анимация.",
-                filterAll: "Все услуги", filterWeb: "Веб-разработка", filterDesign: "Брендинг",
+                filterAll: "Все услуги", filterWeb: "Веб-разработка", filterVideo: "Видеомонтаж", filterDesign: "Брендинг",
                 moreBtn: "Подробнее", backBtn: "← Назад к списку", priceTag: "Стоимость услуги",
                 reviewsTitle: "Отзывы клиентов", sendReview: "Отправить отзыв", footerRights: "Все права защищены.",
                 placeholderName: "Ваше имя", placeholderReview: "Ваш отзыв...",
@@ -1230,6 +1243,7 @@
                 processTitle: "От стратегии до запуска",
                 processDescWeb: "Ведём проект пошагово: каждый этап заканчивается приёмкой. Сроки и стоимость фиксируем до старта, а на финише передаём исходный код, доступы и обучаем работе с сайтом.",
                 processDescLogo: "Создаём логотип поэтапно: от глубокого анализа бренда и скетчей до финальной детализации и передачи всех векторных исходников.",
+                processDescShorts: "Создаем сочный видеоконтент по шагам: нарезка, добавление субтитров, цветокоррекция и качественная работа со звуком для максимального удержания зрителей.",
                 step1TitleWeb: "Аналитика и стратегия", step1TextWeb: "Изучаем задачи, аудиторию и конкурентов, фиксируем цели и структуру сайта.",
                 step2TitleWeb: "Прототип и дизайн", step2TextWeb: "Проектируем интерфейс под конверсию, создаём уникальный визуальный стиль.",
                 step3TitleWeb: "Разработка", step3TextWeb: "Чистая верстка, программирование, интеграция интерактивных элементов и анимаций.",
@@ -1240,9 +1254,14 @@
                 step3TitleLogo: "Доработка", step3TextLogo: "Утверждаем лучший вариант и дорабатываем детали по вашим правкам.",
                 step4TitleLogo: "Гайдлайн", step4TextLogo: "Формируем правила использования логотипа на различных носителях.",
                 step5TitleLogo: "Передача", step5TextLogo: "Высылаем полный комплект исходных файлов во всех векторных форматах.",
+                step1TitleShorts: "Изучение исходника", step1TextShorts: "Принимаем видеоматериалы, обсуждаем концепцию, отбираем лучшие моменты.",
+                step2TitleShorts: "Нарезка и динамика", step2TextShorts: "Убираем паузы, выстраиваем быстрый темп и динамичный ритм видео.",
+                step3TitleShorts: "Субтитры и графика", step3TextShorts: "Добавляем стильные анимационные субтитры, плашки и иконки.",
+                step4TitleShorts: "Звук и цвет", step4TextShorts: "Делаем чистый sound design (SFX), подбираем музыку и настраиваем цветокоррекцию.",
+                step5TitleShorts: "Рендер и экспорт", step5TextShorts: "Экспортируем готовый ролик в максимальном качестве под Shorts, Reels и TikTok.",
                 infoTag: "О студии",
                 infoTitle: "Разрабатываем цифровые продукты высочайшего качества",
-                infoText: "Respawn Visuals — это современный подбор решений для вашего бизнеса или личного бренда. Мы создаём быстрые сайты с чистой версткой и выразительным дизайном, а также разрабатываем уникальные логотипы, выделяющие вас среди конкурентов. Каждая деталь доводится до идеала: от плавной анимации элементов до удобства работы на смартфонах.",
+                infoText: "Respawn Visuals — это современный подбор решений для вашего бизнеса или личного бренда. Мы создаём быстрые сайты с чистой версткой и выразительным дизайном, занимаемся сочным монтажом видео для Shorts/TikTok, а также разрабатываем уникальные логотипы, выделяющие вас среди конкурентов. Каждая деталь доводится до идеала: от плавной анимации элементов до удобства работы на смартфонах.",
                 infoFeat1Title: "100% Адаптив", infoFeat1Desc: "Идеальный вид на смартфонах, планшетах и широких мониторах.",
                 infoFeat2Title: "Высокая скорость", infoFeat2Desc: "Чистый оптимизированный код для мгновенной загрузки страниц.",
                 infoFeat3Title: "Прозрачный процесс", infoFeat3Desc: "Сроки и цена фиксируются заранее. Работа сдаётся поэтапно.",
@@ -1250,12 +1269,16 @@
                     site: { name: "Сайт", price: 20000, desc: "Базовый адаптивный сайт с чистым дизайном.", features: ["Адаптивная верстка (ПК, планшеты, телефоны)", "Современный и чистый дизайн в темной стилистике", "Быстрая оптимизация кода и высокая скорость загрузки", "Прямая поддержка и обсуждение правок"] },
                     sitePlus: { name: "Сайт+", price: 35000, desc: "Расширенный функционал и интерактивные анимации.", features: ["Всё, что входит в тариф 'Сайт'", "Плавные интерактивные анимации при наведении", "Интерактивные элементы интерфейса и формы обратной связи", "Расширенная SEO-оптимизация"] },
                     siteUltra: { name: "Сайт Ультра", price: 60000, desc: "Премиум-решение с уникальной графикой и максимальной кастомизацией.", features: ["Всё, что входит в тариф 'Сайт+'", "Эксклюзивный индивидуальный дизайн и айдентика", "Продвинутые интерактивные скрипты и высокая сложность", "Приоритетная разработка и техподдержка 24/7"] },
+                    editing: { name: "Монтаж", price: 2000, desc: "Быстрый качественный монтаж вашего роли ка.", features: ["Нарезка лишних пауз и неудачных дублей", "Базовые динамичные субтитры", "Подбор фоновой музыки", "Готовый ролик под вертикальный формат"] },
+                    editingPlus: { name: "Монтаж+", price: 5000, desc: "Продвинутый монтаж с эффектами и саунд-дизайном.", features: ["Всё из тарифа 'Монтаж'", "Анимированные субтитры с выделением ключевых слов", "Звуковые эффекты (SFX) и выплывающие всплывашки", "Цветокоррекция и улучшение качества звука"] },
+                    editingUltra: { name: "Монтаж Ультра", price: 7000, desc: "Максимальный динамичный монтаж уровень 'Top Creator'.", features: ["Всё из тарифа 'Монтаж+'", "Сложная графическая анимация и 2D/3D элементы", "Уникальные переходы и максимальное удержание внимания", "Приоритетный рендер и неограниченные мелкие правки"] },
                     logo: { name: "Логотип", price: 10000, desc: "Базовый стильный логотип для вашего проекта.", features: ["1 уникальная концепция логотипа", "Подбор фирменной цветовой гаммы", "Базовые исходники для соцсетей и веба"] },
                     logoPlus: { name: "Логотип+", price: 18000, desc: "Несколько вариантов концептов и расширенный набор файлов.", features: ["Всё из тарифа 'Логотип'", "3 уникальных концепта на выбор", "Исходные векторные файлы (AI, EPS, SVG, PNG)", "Варианты адаптации под аватарки и баннеры"] },
                     logoUltra: { name: "Логотип Ультра", price: 30000, desc: "Максимальный пакет с глубокой проработкой и бренд-гайдом.", features: ["Всё из тарифа 'Логотип+'", "Неограниченные правки на этапе согласования", "Мини-гайдлайн по использованию стиля", "Приоритетная разработка за 24-48 часов"] }
                 },
                 cards: {
                     web: { name: "Создание сайтов", tag: "Web Dev & UI", sub: "Полноценный адаптивный сайт с интерактивными элементами и высокой производительностью.", basePrice: 20000 },
+                    shorts: { name: "Shorts, TikTok, Instagram", tag: "Video & Reels", sub: "Динамичный монтаж вертикальных видео, эффектные субтитры и звуковой дизайн для соцсетей.", basePrice: 2000 },
                     branding: { name: "Логотипы", tag: "Logo & Design", sub: "Уникальные логотипы, иконки и фирменный стиль для вашего проекта.", basePrice: 10000 }
                 }
             },
@@ -1263,7 +1286,7 @@
                 fromText: "from",
                 heroTitle: "Imba Websites & Design",
                 heroSubtitle: "Choose a service for your tasks. Premium design, responsiveness across all devices, and smooth animations.",
-                filterAll: "All Services", filterWeb: "Web Dev", filterDesign: "Logos",
+                filterAll: "All Services", filterWeb: "Web Dev", filterVideo: "Video Editing", filterDesign: "Logos",
                 moreBtn: "Details", backBtn: "← Back to list", priceTag: "Service Price",
                 reviewsTitle: "Client Reviews", sendReview: "Submit Review", footerRights: "All rights reserved.",
                 placeholderName: "Your name", placeholderReview: "Your review...",
@@ -1273,6 +1296,7 @@
                 processTitle: "From strategy to launch",
                 processDescWeb: "We guide the project step-by-step. Deadlines and costs are fixed before starting, and at the finish we hand over the source code and accesses.",
                 processDescLogo: "Creating a logo step-by-step: from deep brand analysis and sketches to final detailing and source files.",
+                processDescShorts: "Creating dynamic video content step-by-step: cutting, captions, color correction, and sound design for maximum engagement.",
                 step1TitleWeb: "Analytics & Strategy", step1TextWeb: "Studying tasks, audience, and competitors, establishing site goals and structure.",
                 step2TitleWeb: "Prototype & Design", step2TextWeb: "Designing interface for high conversion, creating unique visual identity.",
                 step3TitleWeb: "Development", step3TextWeb: "Clean markup, coding, integration of interactive elements and animations.",
@@ -1283,9 +1307,14 @@
                 step3TitleLogo: "Revision", step3TextLogo: "Approving the best option and refining details based on your feedback.",
                 step4TitleLogo: "Guidelines", step4TextLogo: "Setting up rules for logo usage across different media.",
                 step5TitleLogo: "Handover", step5TextLogo: "Sending a full set of source files in all vector formats.",
+                step1TitleShorts: "Reviewing Footage", step1TextShorts: "Receiving raw files, discussing the concept, selecting best moments.",
+                step2TitleShorts: "Cutting & Pacing", step2TextShorts: "Removing pauses, setting a fast-paced dynamic rhythm.",
+                step3TitleShorts: "Captions & Graphics", step3TextShorts: "Adding stylish animated subtitles, pop-ups, and icons.",
+                step4TitleShorts: "Sound & Color", step4TextShorts: "Crafting sound design (SFX), picking music, and color grading.",
+                step5TitleShorts: "Render & Export", step5TextShorts: "Exporting final video in highest quality for Shorts, Reels, and TikTok.",
                 infoTag: "About Us",
                 infoTitle: "We develop high-quality digital products",
-                infoText: "Respawn Visuals offers modern solutions for your business or personal brand. We build fast websites with clean code and striking design, as well as unique logos that stand out from competitors.",
+                infoText: "Respawn Visuals offers modern solutions for your business or personal brand. We build fast websites with clean code, edit catchy videos for Shorts/TikTok, and design unique logos.",
                 infoFeat1Title: "100% Adaptive", infoFeat1Desc: "Flawless view on phones, tablets, and wide monitors.",
                 infoFeat2Title: "High Speed", infoFeat2Desc: "Clean optimized code for instant page loading.",
                 infoFeat3Title: "Transparent Process", infoFeat3Desc: "Fixed timelines and costs upfront. Phased delivery.",
@@ -1293,12 +1322,16 @@
                     site: { name: "Website", price: 20000, desc: "Basic adaptive website with clean design.", features: ["Adaptive layout", "Modern dark design", "Fast optimization", "Direct support"] },
                     sitePlus: { name: "Website+", price: 35000, desc: "Extended functionality and interactive animations.", features: ["Everything in 'Website'", "Smooth hover animations", "Interactive UI elements & forms", "Advanced SEO optimization"] },
                     siteUltra: { name: "Website Ultra", price: 60000, desc: "Premium solution with unique graphics and max customization.", features: ["Everything in 'Website+'", "Exclusive custom design & identity", "Advanced scripts & high complexity", "Priority dev & 24/7 support"] },
+                    editing: { name: "Editing", price: 2000, desc: "Fast quality editing for your video clip.", features: ["Removing pauses and bloopers", "Basic dynamic captions", "Background music selection", "Vertical video output"] },
+                    editingPlus: { name: "Editing+", price: 5000, desc: "Advanced editing with effects and sound design.", features: ["Everything in 'Editing'", "Animated captions with highlights", "Sound effects (SFX) and pop-ups", "Color grading & audio enhancement"] },
+                    editingUltra: { name: "Editing Ultra", price: 7000, desc: "Top-tier dynamic editing for max retention.", features: ["Everything in 'Editing+'", "Complex motion graphics & 2D/3D elements", "Custom transitions & peak viewer retention", "Priority render & unlimited small edits"] },
                     logo: { name: "Logo", price: 10000, desc: "Basic stylish logo for your project.", features: ["1 unique logo concept", "Brand color palette", "Basic source files for web"] },
                     logoPlus: { name: "Logo+", price: 18000, desc: "Multiple concept options and expanded file set.", features: ["Everything in 'Logo'", "3 unique concepts to choose from", "Vector files (AI, EPS, SVG, PNG)", "Avatar and banner adaptations"] },
                     logoUltra: { name: "Logo Ultra", price: 30000, desc: "Maximum package with deep elaboration and brand guide.", features: ["Everything in 'Logo+'", "Unlimited revisions during approval", "Mini style guide", "Priority development in 24-48 hours"] }
                 },
                 cards: {
                     web: { name: "Website Creation", tag: "Web Dev & UI", sub: "Individual interface development for any of your tasks.", basePrice: 20000 },
+                    shorts: { name: "Shorts, TikTok, Instagram", tag: "Video & Reels", sub: "Dynamic video editing, impactful captions, and sound design for social media.", basePrice: 2000 },
                     branding: { name: "Logos", tag: "Logo & Design", sub: "Unique logos, icons, and branding for your project.", basePrice: 10000 }
                 }
             }
@@ -1373,7 +1406,7 @@
 
             const grid = document.getElementById('servicesGrid');
             const cards = grid.children;
-            const keys = ['web', 'branding'];
+            const keys = ['web', 'shorts', 'branding'];
             const currentSymbol = symbols[currentCurr];
             const fromWord = t.fromText || 'от';
 
@@ -1390,9 +1423,13 @@
             const convertedWeb = Math.round(baseWeb * rates[currentCurr]);
             cards[0].querySelector('.card-price').innerText = `${fromWord} ${convertedWeb.toLocaleString()} ${currentSymbol}`;
 
+            const baseShorts = translations.ru.tiers.editing.price;
+            const convertedShorts = Math.round(baseShorts * rates[currentCurr]);
+            cards[1].querySelector('.card-price').innerText = `${fromWord} ${convertedShorts.toLocaleString()} ${currentSymbol}`;
+
             const baseLogo = translations.ru.tiers.logo.price;
             const convertedLogo = Math.round(baseLogo * rates[currentCurr]);
-            cards[1].querySelector('.card-price').innerText = `${fromWord} ${convertedLogo.toLocaleString()} ${currentSymbol}`;
+            cards[2].querySelector('.card-price').innerText = `${fromWord} ${convertedLogo.toLocaleString()} ${currentSymbol}`;
 
             if (document.getElementById('detailPage').classList.contains('active')) {
                 updateDetailContent(currentProductId);
@@ -1413,9 +1450,13 @@
             const convertedWeb = Math.round(baseWeb * rates[curr]);
             cards[0].querySelector('.card-price').innerText = `${fromWord} ${convertedWeb.toLocaleString()} ${symbols[curr]}`;
 
+            const baseShorts = translations.ru.tiers.editing.price;
+            const convertedShorts = Math.round(baseShorts * rates[curr]);
+            cards[1].querySelector('.card-price').innerText = `${fromWord} ${convertedShorts.toLocaleString()} ${symbols[curr]}`;
+
             const baseLogo = translations.ru.tiers.logo.price;
             const convertedLogo = Math.round(baseLogo * rates[curr]);
-            cards[1].querySelector('.card-price').innerText = `${fromWord} ${convertedLogo.toLocaleString()} ${symbols[curr]}`;
+            cards[2].querySelector('.card-price').innerText = `${fromWord} ${convertedLogo.toLocaleString()} ${symbols[curr]}`;
 
             if (document.getElementById('detailPage').classList.contains('active')) {
                 updateDetailPrice();
@@ -1441,7 +1482,10 @@
 
         function openDetails(productId) {
             currentProductId = productId;
-            currentSubTier = (productId === 'web') ? 'site' : 'logo';
+            if (productId === 'web') currentSubTier = 'site';
+            else if (productId === 'shorts') currentSubTier = 'editing';
+            else currentSubTier = 'logo';
+
             document.getElementById('mainPage').classList.remove('active');
             document.getElementById('detailPage').classList.add('active');
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1479,6 +1523,18 @@
                 document.getElementById('step4Text').innerText = t.step4TextWeb;
                 document.getElementById('step5Title').innerText = t.step5TitleWeb;
                 document.getElementById('step5Text').innerText = t.step5TextWeb;
+            } else if (productId === 'shorts') {
+                document.getElementById('processDescText').innerText = t.processDescShorts;
+                document.getElementById('step1Title').innerText = t.step1TitleShorts;
+                document.getElementById('step1Text').innerText = t.step1TextShorts;
+                document.getElementById('step2Title').innerText = t.step2TitleShorts;
+                document.getElementById('step2Text').innerText = t.step2TextShorts;
+                document.getElementById('step3Title').innerText = t.step3TitleShorts;
+                document.getElementById('step3Text').innerText = t.step3TextShorts;
+                document.getElementById('step4Title').innerText = t.step4TitleShorts;
+                document.getElementById('step4Text').innerText = t.step4TextShorts;
+                document.getElementById('step5Title').innerText = t.step5TitleShorts;
+                document.getElementById('step5Text').innerText = t.step5TextShorts;
             } else {
                 document.getElementById('processDescText').innerText = t.processDescLogo;
                 document.getElementById('step1Title').innerText = t.step1TitleLogo;
@@ -1499,9 +1555,10 @@
             const grid = document.getElementById('subOptionsGrid');
             grid.innerHTML = '';
 
-            const tiersKeys = (currentProductId === 'web') 
-                ? ['site', 'sitePlus', 'siteUltra'] 
-                : ['logo', 'logoPlus', 'logoUltra'];
+            let tiersKeys = [];
+            if (currentProductId === 'web') tiersKeys = ['site', 'sitePlus', 'siteUltra'];
+            else if (currentProductId === 'shorts') tiersKeys = ['editing', 'editingPlus', 'editingUltra'];
+            else tiersKeys = ['logo', 'logoPlus', 'logoUltra'];
 
             tiersKeys.forEach(key => {
                 const tier = t.tiers[key];
